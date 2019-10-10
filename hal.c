@@ -1039,7 +1039,7 @@ PUBLIC void DCM_staMot( enDCM_ID en_id )
 		DCM_R_TIMER = ON;			// タイマ開始
 	}
 	else{							// 左
-	    	DCM_L_TIORB = 2;			// TIOCB 端子の機能 : 初期出力は 0 出力。コンペアマッチで 1 出力
+	    DCM_L_TIORB = 2;			// TIOCB 端子の機能 : 初期出力は 0 出力。コンペアマッチで 1 出力
 		DCM_L_TIMER = ON;			// タイマ開始
 	}
 }
@@ -1086,13 +1086,13 @@ PUBLIC void DCM_setPwmDuty( enDCM_ID en_id, USHORT us_duty10 )
 			DCM_R_TIMER = OFF;			// タイマ停止
 			DCM_R_TCNT = 0;				// TCNT カウンタをクリア
 			DCM_R_GRB = 5000;			// タイマ値変更
-		    	DCM_R_TIORB = 6;			// TIOCB 端子の機能 : 初期出力は 1 出力。コンペアマッチで 1 出力
+		    DCM_R_TIORB = 6;			// TIOCB 端子の機能 : 初期出力は 1 出力。コンペアマッチで 1 出力
 			DCM_R_TIMER = ON;			// タイマ開始
 			us_duty10 = 1000;
 		}
 		else{
 			us_cycle = DCM_R_GRA;		// 周期
-			us_onReg = (USHORT)( (ULONG)us_cycle * (ULONG)us_duty10 / (ULONG)1000 );	// Duty2Reg 計算式
+			us_onReg = (USHORT)( (ULONG)us_cycle *((ULONG)1000 - (ULONG)us_duty10) / (ULONG)1000 );	// Duty2Reg 計算式
 			DCM_R_TIMER = OFF;			// タイマ停止
 			DCM_R_TCNT = 0;				// TCNT カウンタをクリア
 			DCM_R_GRB = us_onReg;		// onDuty
@@ -1110,13 +1110,13 @@ PUBLIC void DCM_setPwmDuty( enDCM_ID en_id, USHORT us_duty10 )
 			DCM_L_TIMER = OFF;			// タイマ停止
 			DCM_L_TCNT = 0;				// TCNT カウンタをクリア
 			DCM_L_GRB = 5000;			// タイマ値変更
-		    	DCM_L_TIORB = 6;			// TIOCB 端子の機能 : 初期出力は 1 出力。コンペアマッチで 1 出力
+		    DCM_L_TIORB = 6;			// TIOCB 端子の機能 : 初期出力は 1 出力。コンペアマッチで 1 出力
 			DCM_L_TIMER = ON;			// タイマ開始
 			us_duty10 = 1000;
 		}
 		else{
 			us_cycle = DCM_L_GRA;		// 周期
-			us_onReg = (USHORT)( (ULONG)us_cycle * (ULONG)us_duty10 / (ULONG)1000 );	// Duty2Reg 計算式
+			us_onReg = (USHORT)( (ULONG)us_cycle * ((ULONG)1000 - (ULONG)us_duty10) / (ULONG)1000 );	// Duty2Reg 計算式
 			DCM_L_TIMER = OFF;			// タイマ停止
 			DCM_L_TCNT = 0;				// TCNT カウンタをクリア
 			DCM_L_GRB = us_onReg;		// タイマ値変更
