@@ -81,7 +81,7 @@
 #pragma bit_order left
 #pragma unpack
 
-#ifdef _VSCODE	//追記部分
+#ifdef _VSCODE	//????
 #define _evenaccess
 #endif
 
