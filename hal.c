@@ -45,7 +45,7 @@
 #define PI							( 3.14159f )								// π
 
 /* 調整パラメータ */
-#define VCC_MAX						( 8.4f )									// バッテリ最大電圧[V]、4.2[V]×2[セル]
+#define VCC_MAX						( 4.2f )									// バッテリ最大電圧[V]、4.2[V]×1[セル]
 #define TIRE_R						( 22.25f )									// タイヤ直径 [mm]
 #define GEAR_RATIO					( 36 / 8 )									// ギア比(スパー/ピニオン)
 //#define ROTATE_PULSE					( 2048 )									// 1周のタイヤパルス数
@@ -1155,3 +1155,4 @@ PUBLIC void CTRL_stop( void )
 	DCM_brakeMot( DCM_R );		// ブレーキ
 	DCM_brakeMot( DCM_L );		// ブレーキ
 }
+
