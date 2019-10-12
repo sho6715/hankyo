@@ -180,7 +180,7 @@ PRIVATE BOOL MOT_setWallEdgeDist_LoopWait( void );
 //フェイルセーフ
 PUBLIC void Failsafe_flag(void);
 PUBLIC void Failsafe_flag_off(void);
-PUBLIC BOOL SYS_isOutOfCtrl( void );
+//PUBLIC BOOL SYS_isOutOfCtrl( void );
 
 //ログ関数
 PUBLIC void log_interrupt ( void );

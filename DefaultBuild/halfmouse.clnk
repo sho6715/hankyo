@@ -10,6 +10,12 @@
 -input=DefaultBuild\parameters.obj
 -input=DefaultBuild\lowlvl.obj
 -input=DefaultBuild\lowsrc.obj
+-input=DefaultBuild\system.obj
+-input=DefaultBuild\search.obj
+-input=DefaultBuild\mode.obj
+-input=DefaultBuild\map_cmd.obj
+-input=DefaultBuild\hal_dist.obj
+-input=DefaultBuild\DataFlash.obj
 -noprelink
 -output=DefaultBuild\halfmouse.abs
 -list=DefaultBuild\halfmouse.map

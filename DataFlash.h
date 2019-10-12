@@ -1,57 +1,36 @@
-//   ロボット名		： half
-//   概要		： initファイル（レジスタ設定ファイル他）のヘッダファイル
+// *************************************************************************
+//   ロボット名		： AEGIS
+//   概要		： DataFlashのヘッダファイル
 //   注意		： なし
 //   メモ		： なし
 //   引数		： なし
 //   返り値		： なし
 // **************************    履    歴    *******************************
-// 		v1.0		2018.06.28			sato			新規（ファイルのインクルード）
+// 		v1.0		2018.11.25			sato			新規（ファイルのインクルード）
 // *************************************************************************/
 // 多重コンパイル抑止
-#ifndef _INIT_H
-#define _INIT_H
+#ifndef _DATAFLASH_H
+#define _DATAFLASH_H
 
 //**************************************************
 // インクルードファイル（include）
 //**************************************************
 #include <typedefine.h>						// 定義
 #include <iodefine.h>						// I/O
+#include <init.h>
+#include <parameters.h>
 
 //**************************************************
 // 定義（define）
 //**************************************************
-#define LED	(PORTA.PODR.BYTE)		//下位ビットのみで使用上位ビットを使わないこと
-#define LED_ALL_OFF	(0x00)
-#define LED_ALL_ON	(0x5a)
-#define LED1	(0x02)
-#define LED2	(0x08)
-#define LED3	(0x0a)
-#define LED4	(0x10)
-#define LED5	(0x12)
-#define LED6	(0x18)
-#define LED7	(0x1a)
-#define LED8	(0x40)
-#define LED9	(0x42)
-#define LED10	(0x48)
-#define LED11	(0x4a)
-#define LED12	(0x50)
-#define LED13	(0x52)
-#define LED14	(0x58)
+#define REF_SEN_R_ADD 0x00100000
+#define REF_SEN_L_ADD 0x00100002
+#define TH_SEN_R_ADD  0x00100004
+#define TH_SEN_L_ADD  0x00100006
+#define TH_SEN_FR_ADD 0x00100008
+#define TH_SEN_FL_ADD 0x0010000a
 
-
-
-#define LEDG	(PORT3.PODR.BIT.B7)
-//#define LEDR	(PORT1.PODR.BIT.B4)
-
-/*スイッチ*/
-#define		SW_INC_PIN		(PORT2.PIDR.BIT.B7)			// モード切り替え
-#define		SW_EXE_PIN		(PORT4.PIDR.BIT.B6)			// モード実行
-#define		SW_ON			(OFF)						// Pull-Upのため、ON-OFFが論理反転さている
-#define		SW_OFF			(ON)						// Pull-Upのため、ON-OFFが論理反転さている
-
-/*エンコーダ*/
-#define		ENC_R_TCNT	(TPU1.TCNT)
-#define		ENC_L_TCNT	(TPU2.TCNT)
+#define MAP_ADD		  0x00100800
 
 //**************************************************
 // 列挙体（enum）
@@ -66,14 +45,21 @@
 //**************************************************
 // グローバル変数
 //**************************************************
-
-
+void map_write(void);
+void map_erase(void);
+void hw_dflash_init(void);
+void write_eeflash(ULONG addr, USHORT *data);
+void erase(ULONG addr);
+char blank_check(ULONG addr);
+void map_copy(void);
+static void transition_read(void);
+static void transition_pe(void);
+PUBLIC void flash_test(USHORT r);
+PUBLIC void Flash_read(USHORT *add, USHORT *data);
 
 
 //**************************************************
 // プロトタイプ宣言（ファイル内で必要なものだけ記述）
 //**************************************************
 
-PUBLIC void CPU_init(void);
-
-#endif	
+#endif

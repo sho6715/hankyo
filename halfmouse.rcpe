@@ -12,18 +12,30 @@
       <Path>init.c</Path>
       <Path>hal.h</Path>
       <Path>parameters.h</Path>
+      <Path>DataFlash.h</Path>
+      <Path>DataFlash.c</Path>
+      <Path>hal_dist.h</Path>
+      <Path>hal_dist.c</Path>
       <Path>parameters.c</Path>
       <Path>hal.c</Path>
       <Path>halfmouse.c</Path>
       <Path>intprg.c</Path>
       <Path>resetprg.c</Path>
-      <Path>sbrk.c</Path>
-      <Path>vecttbl.c</Path>
       <Path>iodefine.h</Path>
+      <Path>sbrk.c</Path>
       <Path>sbrk.h</Path>
+      <Path>mode.h</Path>
+      <Path>mode.c</Path>
+      <Path>map_cmd.h</Path>
+      <Path>map_cmd.c</Path>
       <Path>stacksct.h</Path>
       <Path>typedefine.h</Path>
+      <Path>system.c</Path>
+      <Path>search.c</Path>
+      <Path>search.h</Path>
+      <Path>system.h</Path>
       <Path>vect.h</Path>
+      <Path>vecttbl.c</Path>
       <Path>lowlvl.src</Path>
       <Path>lowsrc.c</Path>
       <Path>lowsrc.h</Path>
@@ -89,6 +101,12 @@
           <Path>DefaultBuild\parameters.obj</Path>
           <Path>DefaultBuild\lowlvl.obj</Path>
           <Path>DefaultBuild\lowsrc.obj</Path>
+          <Path>DefaultBuild\system.obj</Path>
+          <Path>DefaultBuild\search.obj</Path>
+          <Path>DefaultBuild\mode.obj</Path>
+          <Path>DefaultBuild\map_cmd.obj</Path>
+          <Path>DefaultBuild\hal_dist.obj</Path>
+          <Path>DefaultBuild\DataFlash.obj</Path>
         </LinkOrder>
         <CommonOptions>
           <IncludePathForC>.</IncludePathForC>

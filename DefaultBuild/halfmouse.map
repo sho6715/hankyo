@@ -1,4 +1,4 @@
-Renesas Optimizing Linker (W2.08.00 )             10-Oct-2019 18:23:46
+Renesas Optimizing Linker (W2.08.00 )             12-Oct-2019 12:18:29
 
 *** Options ***
 
@@ -15,6 +15,12 @@ Renesas Optimizing Linker (W2.08.00 )             10-Oct-2019 18:23:46
 -input=DefaultBuild\parameters.obj
 -input=DefaultBuild\lowlvl.obj
 -input=DefaultBuild\lowsrc.obj
+-input=DefaultBuild\system.obj
+-input=DefaultBuild\search.obj
+-input=DefaultBuild\mode.obj
+-input=DefaultBuild\map_cmd.obj
+-input=DefaultBuild\hal_dist.obj
+-input=DefaultBuild\DataFlash.obj
 -noprelink
 -output=DefaultBuild\halfmouse.abs
 -list=DefaultBuild\halfmouse.map
@@ -30,21 +36,21 @@ Renesas Optimizing Linker (W2.08.00 )             10-Oct-2019 18:23:46
 
 SECTION                            START      END         SIZE   ALIGN
 B_1
-                                  00000004  0000002e        2b   1
+                                  00000004  00003132      312f   1
 R_1
-                                  0000002f  00000081        53   1
+                                  00003133  00003189        57   1
 B_2
-                                  00000082  0000008b         a   2
+                                  0000318a  000033df       256   2
 R_2
-                                  0000008c  00000097         c   2
+                                  000033e0  000033ff        20   2
 B
-                                  00000098  00000593       4fc   4
+                                  00003400  0000f4ef      c0f0   4
 R
-                                  00000594  00000867       2d4   4
+                                  0000f4f0  0000f82f       340   4
 SU
-                                  00000868  00000967       100   4
+                                  0000f830  0000f92f       100   4
 SI
-                                  00000968  00000c67       300   4
+                                  0000f930  0000fc2f       300   4
 PResetPRG
                                   fff80000  fff80034        35   1
 C_1
@@ -52,35 +58,35 @@ C_1
 C_2
                                   fff801d2  fff803d3       202   2
 C
-                                  fff803d4  fff81c53      1880   4
+                                  fff803d4  fff81efb      1b28   4
 C$DSEC
-                                  fff81c54  fff81c77        24   4
+                                  fff81efc  fff81f1f        24   4
 C$BSEC
-                                  fff81c78  fff81c8f        18   4
+                                  fff81f20  fff81f37        18   4
 C$INIT
-                                  fff81c90  fff81c90         0   1
+                                  fff81f38  fff81f38         0   1
 C$VTBL
-                                  fff81c90  fff81c90         0   1
+                                  fff81f38  fff81f38         0   1
 C$VECT
-                                  fff81c90  fff8208f       400   4
+                                  fff81f38  fff82337       400   4
 D_1
-                                  fff82090  fff820e2        53   1
+                                  fff82338  fff8238e        57   1
 D_2
-                                  fff820e4  fff820ef         c   2
+                                  fff82390  fff823af        20   2
 D
-                                  fff820f0  fff823c3       2d4   4
+                                  fff823b0  fff826ef       340   4
 P
-                                  fff823c4  fff8565f      329c   1
+                                  fff826f0  fff89792      70a3   1
 PIntPRG
-                                  fff85660  fff85821       1c2   1
+                                  fff89793  fff89954       1c2   1
 W_1
-                                  fff85822  fff85841        20   1
+                                  fff89955  fff899a1        4d   1
 W_2
-                                  fff85842  fff85861        20   2
+                                  fff899a2  fff899df        3e   2
 W
-                                  fff85864  fff85864         0   4
+                                  fff899e0  fff899e0         0   4
 L
-                                  fff85864  fff85bdc       379   4
+                                  fff899e0  fff89e88       4a9   4
 $ADDR_C_FFFFFF80
                                   ffffff80  ffffff83         4   1
 $ADDR_C_FFFFFFA0
