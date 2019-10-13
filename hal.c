@@ -48,12 +48,12 @@
 
 /* 調整パラメータ */
 #define VCC_MAX						( 4.2f )									// バッテリ最大電圧[V]、4.2[V]×1[セル]
-#define TIRE_R						( 22.25f )									// タイヤ直径 [mm]
-#define GEAR_RATIO					( 36 / 8 )									// ギア比(スパー/ピニオン)
-/*修正待ち*/#define ROTATE_PULSE					( 2048 )									// 1周のタイヤパルス数
-/*修正待ち*/#define DIST_1STEP					( PI * TIRE_R / GEAR_RATIO / ROTATE_PULSE )				// 1パルスで進む距離 [mm]
-/*修正待ち*/#define F_CNT2MM(cnt)					( (FLOAT)cnt * DIST_1STEP )				// [カウント値]から[mm]へ換算
-#define MOT_MOVE_ST_THRESHOLD				( 25 )							// 直進移動距離の閾値[mm]
+#define TIRE_R						( 13.0f )	//推定値								// タイヤ直径 [mm]
+#define GEAR_RATIO					( 36 / 9 )									// ギア比(スパー/ピニオン)
+#define ROTATE_PULSE				( 2048 )									// 1周のタイヤパルス数
+#define DIST_1STEP					( PI * TIRE_R / GEAR_RATIO / ROTATE_PULSE )				// 1パルスで進む距離 [mm]
+#define F_CNT2MM(cnt)				( (FLOAT)cnt * DIST_1STEP )				// [カウント値]から[mm]へ換算
+#define MOT_MOVE_ST_THRESHOLD			( 25 )							// 直進移動距離の閾値[mm]
 #define MOT_MOVE_ST_MIN					( 20 )							// 直進移動距離の最低移動量[mm]
 //#define MOT_ACC						( 1800 )						// 直進移動の加速度[mm/s2]
 //#define MOT_DEC						( 1800 )						// 直進移動の減速度[mm/s2]
@@ -265,6 +265,12 @@ PUBLIC	BOOL	b_logflag = FALSE;
 
 PRIVATE FLOAT	templog1	= 0;
 PRIVATE FLOAT	templog2	= 0;
+
+PUBLIC	LONG	ENC_R_CNT	= 0;
+PUBLIC	LONG	ENC_L_CNT	= 0;
+PRIVATE	LONG	ENC_R_CNT_old = 0;
+PRIVATE	LONG	ENC_L_CNT_old = 0;
+
 
 //ログ用デューティー
 PRIVATE	FLOAT	f_Duty_R;
@@ -931,71 +937,98 @@ PUBLIC USHORT recv_spi_gyrooffset(void)
 }
 
 // *************************************************************************
-//   機能		： エンコーダのカウントを開始する
+//   機能		： エンコーダのカウント値（SPI）を取得する
+//   注意		： なし
+//   メモ		： 取得値はビット
+//   引数		： なし
+//   返り値		： なし
+// **************************    履    歴    *******************************
+// 		v1.0		2019.10.12			sato			新規
+// *************************************************************************/
+PUBLIC USHORT recv_spi_encoder(void)
+{
+	USHORT recv1;
+	USHORT recv2;
+	
+	PORT4.PODR.BIT.B1 = 0;
+	TIME_waitFree(50);
+	recv1 = recv_spi(0x00);
+	recv2 = recv_spi(0x00);
+	PORT4.PODR.BIT.B1 = 1;
+
+	ENC_R_CNT = (recv1<<8)+(recv2&0xFF);
+	
+	PORT4.PODR.BIT.B2 = 0;
+	TIME_waitFree(50);
+	recv1 = recv_spi(0x00);
+	recv2 = recv_spi(0x00);
+	PORT4.PODR.BIT.B2 = 1;
+	
+	RSPI0.SPSR.BYTE = 0xA0;
+	
+	ENC_R_CNT = (recv1<<8)+(recv2&0xFF);
+	
+}
+
+// *************************************************************************
+//   機能		： エンコーダのカウント値（偏差）を取得する
 //   注意		： なし
 //   メモ		： なし
 //   引数		： なし
 //   返り値		： なし
 // **************************    履    歴    *******************************
-// 		v1.0		2013.12.03			外川			新規
-// *************************************************************************/
-PUBLIC void ENC_Sta( void )
-{
-	ENC_R_TSTR = ON;		// カウント開始
-	ENC_L_TSTR = ON;		// カウント開始
-}
-
-
-// *************************************************************************
-//   機能		： エンコーダのカウントを停止する
-//   注意		： なし
-//   メモ		： なし
-//   引数		： なし
-//   返り値		： なし
-// **************************    履    歴    *******************************
-// 		v1.0		2013.12.03			外川			新規
-// *************************************************************************/
-PUBLIC void ENC_Stop( void )
-{
-	ENC_R_TSTR = OFF;		// カウント停止
-	ENC_L_TSTR = OFF;		// カウント停止
-}
-
-
-// *************************************************************************
-//   機能		： エンコーダのカウントをクリア
-//   注意		： なし
-//   メモ		： なし
-//   引数		： なし
-//   返り値		： なし
-// **************************    履    歴    *******************************
-// 		v1.0		2013.12.03			外川			新規
-// *************************************************************************/
-PRIVATE void ENC_clr( void )
-{
-	ENC_R_TCNT = ENC_RESET_VAL;
-	ENC_L_TCNT = ENC_RESET_VAL;
-}
-
-
-// *************************************************************************
-//   機能		： エンコーダのカウント値（パルス数）を取得する
-//   注意		： なし
-//   メモ		： 中間値からの差分
-//   引数		： なし
-//   返り値		： なし
-// **************************    履    歴    *******************************
-// 		v1.0		2013.12.03			外川			新規
+// 		v1.0		2019.10.12			sato			新規
 // *************************************************************************/
 PUBLIC void ENC_GetDiv( LONG* p_r, LONG* p_l )
 {
-	LONG l_cntR = (LONG)ENC_R_TCNT;
-	LONG l_cntL = (LONG)ENC_L_TCNT;
-	
-	ENC_clr();		// カウント値リセット
-	
-	*p_r = l_cntR - ENC_RESET_VAL;		// 右モータ
-	*p_l = ENC_RESET_VAL - l_cntL;		// 左モータ
+	SHORT cntR;
+	SHORT cntL;
+	SHORT cntR_dif;
+	SHORT cntL_dif;
+	recv_spi_encoder();
+	cntR_dif = ENC_R_CNT_old/ 2048 - ENC_R_CNT/ 2048;
+	cntL_dif = ENC_L_CNT_old/ 2048 - ENC_L_CNT/ 2048;
+
+	//加速度を使って正逆をチェックして加算方法を決める
+	//実際に組み上げてから正逆の加算チェックを行う
+//	if(acc_now > 0){	//正方向カウント
+		//右
+		if(cntR_dif>0){
+			cntR = cntR_dif - 360;
+		}
+		else{
+			cntR = cntR_dif;
+		}
+		//左
+		if(cntR_dif>0){
+			cntL = cntR_dif - 360;
+		}
+		else{
+			cntL = cntL_dif;
+		}
+/*	}
+	else{
+		//右
+		if(cntR_dif>0){
+			cntR = cntR_dif + 360;
+		}
+		else{
+			cntR = cntR_dif;
+		}
+		//左
+		if(cntR_dif>0){
+			cntL = cntR_dif + 360;
+		}
+		else{
+			cntL = cntL_dif;
+		}
+	}
+*/
+	*p_r = cntR;		//2^11(2048) LSB/1回転
+	*p_l = cntL;
+
+	ENC_R_CNT_old = ENC_R_CNT;
+	ENC_L_CNT_old = ENC_L_CNT;
 }
 
 // *************************************************************************
@@ -1234,7 +1267,9 @@ PUBLIC void CTRL_stop( void )
 // *************************************************************************/
 PUBLIC void CTRL_clrData( void )
 {
-	ENC_clr();								// エンコーダモジュール初期化
+	recv_spi_encoder();								// エンコーダモジュール初期化
+	ENC_R_CNT_old	= ENC_R_CNT;
+	ENC_L_CNT_old	= ENC_L_CNT;
 	l_CntR			= 0;						// カウンタクリア
 	l_CntL			= 0;						// カウンタクリア
 	

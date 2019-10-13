@@ -503,13 +503,13 @@ void main(void)
 	CPU_init();						// [CPU] レジスタ/GPIO/AD/TIMERなど
 	TIME_init();						// [SYS] タイマー
 	HAL_init();						// [HAL] ハードウエアドライバ
-//	DIST_init();
-//	MAP_Goal_init();
+	DIST_init();
+	MAP_Goal_init();
 	RX631_staTimer();					// [CPU] タイマスタート
 //	printf("set1\n\r");
 	SYS_start();						// [SYS] 動作開始
-//	hw_dflash_init();
-//	MAP_init();
+	hw_dflash_init();
+	MAP_init();
 	
 	recv_spi_init();					//SPIイニシャライズ
 //	TIME_wait(100);
@@ -575,7 +575,7 @@ PUBLIC void INTC_sys(void)
 	ul_Wait++;
 	ul_Wait %= 6000000;			// 10 min (= 6000000 カウント) で 0 クリア
 	
-//	CTRL_pol();
+	CTRL_pol();
 }
 
 // *************************************************************************

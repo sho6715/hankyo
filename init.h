@@ -49,9 +49,7 @@
 #define		SW_ON			(OFF)						// Pull-Upのため、ON-OFFが論理反転さている
 #define		SW_OFF			(ON)						// Pull-Upのため、ON-OFFが論理反転さている
 
-/*エンコーダ*/
-#define		ENC_R_TCNT	(TPU1.TCNT)
-#define		ENC_L_TCNT	(TPU2.TCNT)
+
 
 //**************************************************
 // 列挙体（enum）

@@ -126,9 +126,6 @@ PUBLIC USHORT recv_spi_gyro(void);
 PUBLIC USHORT recv_spi_gyrooffset(void);
 
 /* エンコーダ */
-PUBLIC void ENC_Sta( void );
-PUBLIC void ENC_Stop( void );
-PUBLIC void ENC_Clr( void );
 PUBLIC void ENC_GetDiv( LONG* p_r, LONG* p_l );
 
 /* DCM */
