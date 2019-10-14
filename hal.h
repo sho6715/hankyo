@@ -126,7 +126,9 @@ PUBLIC USHORT recv_spi_gyro(void);
 PUBLIC USHORT recv_spi_gyrooffset(void);
 
 /* エンコーダ */
+PUBLIC USHORT recv_spi_encoder(void);
 PUBLIC void ENC_GetDiv( LONG* p_r, LONG* p_l );
+PUBLIC void ENC_print(void);
 
 /* DCM */
 PUBLIC void DCM_setDirCw( enDCM_ID en_id );
@@ -177,7 +179,7 @@ PRIVATE BOOL MOT_setWallEdgeDist_LoopWait( void );
 //フェイルセーフ
 PUBLIC void Failsafe_flag(void);
 PUBLIC void Failsafe_flag_off(void);
-//PUBLIC BOOL SYS_isOutOfCtrl( void );
+PUBLIC BOOL SYS_isOutOfCtrl( void );
 
 //ログ関数
 PUBLIC void log_interrupt ( void );

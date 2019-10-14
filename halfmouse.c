@@ -303,14 +303,22 @@ PRIVATE void MODE_exe0( void )
 
 		case MODE_4:
 			LED = LED_ALL_ON;
+			CTRL_sta();
 			while(1){
-//				printf("エンコーダ [R]=%d [L]=%d \r",ENC_R_TCNT,ENC_L_TCNT);
+				ENC_print();
 				TIME_wait(50);
 			}
 			break;
 
 		case MODE_5:
 			LED = LED_ALL_ON;
+			TIME_wait(100);
+			LED = LED_ALL_OFF;
+			CTRL_sta();
+			while(1){
+				printf("[encoder]%x\n\r",recv_spi_encoder());
+				TIME_wait(50);
+			}
 //			MAP_showLog();
 			break;
 
@@ -374,6 +382,7 @@ PRIVATE void MODE_exe( void )
 //	USHORT *read;
 //	enMAP_HEAD_DIR		en_endDir;
 	GYRO_SetRef();
+	Failsafe_flag_off();
 //	log_flag_on();	//ログ関数実行用フラグ　大会時には削除
 	/* モード表示 */
 	switch( en_Mode ){

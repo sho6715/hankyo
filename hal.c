@@ -956,7 +956,7 @@ PUBLIC USHORT recv_spi_encoder(void)
 	recv2 = recv_spi(0x00);
 	PORT4.PODR.BIT.B1 = 1;
 
-	ENC_R_CNT = (recv1<<8)+(recv2&0xFF);
+	ENC_L_CNT = (recv1<<8)+(recv2&0xFF);
 	
 	PORT4.PODR.BIT.B2 = 0;
 	TIME_waitFree(50);
@@ -967,6 +967,8 @@ PUBLIC USHORT recv_spi_encoder(void)
 	RSPI0.SPSR.BYTE = 0xA0;
 	
 	ENC_R_CNT = (recv1<<8)+(recv2&0xFF);
+
+	return(recv1);
 	
 }
 
@@ -989,7 +991,7 @@ PUBLIC void ENC_GetDiv( LONG* p_r, LONG* p_l )
 	cntR_dif = ENC_R_CNT_old/ 2048 - ENC_R_CNT/ 2048;
 	cntL_dif = ENC_L_CNT_old/ 2048 - ENC_L_CNT/ 2048;
 
-	//加速度を使って正逆をチェックして加算方法を決める
+	//モードを使って正逆をチェックして加算方法を決める
 	//実際に組み上げてから正逆の加算チェックを行う
 //	if(acc_now > 0){	//正方向カウント
 		//右
@@ -1029,6 +1031,20 @@ PUBLIC void ENC_GetDiv( LONG* p_r, LONG* p_l )
 
 	ENC_R_CNT_old = ENC_R_CNT;
 	ENC_L_CNT_old = ENC_L_CNT;
+}
+
+// *************************************************************************
+//   機能		： エンコーダのカウント値（偏差）を取得する
+//   注意		： なし
+//   メモ		： なし
+//   引数		： なし
+//   返り値		： なし
+// **************************    履    歴    *******************************
+// 		v1.0		2019.10.12			sato			新規
+// *************************************************************************/
+PUBLIC void ENC_print(void)
+{
+	printf("エンコーダ [R]=%d [L]=%d \r",ENC_R_CNT,ENC_L_CNT);
 }
 
 // *************************************************************************
