@@ -33,6 +33,10 @@ void abort(void);
 #include <hal.h>					//HAL
 #include <init.h>
 #include <parameters.h>
+#include <search.h>
+#include <map_cmd.h>
+#include <hal_dist.h>
+#include <DataFlash.h>
 
 //**************************************************
 // 定義（define）
@@ -283,12 +287,12 @@ PRIVATE void MODE_exe0( void )
 			LED = LED_ALL_ON;
 			while(1){
 
-//				printf("   距離センサ [R_F]%5d [L_F]%5d [R_S]%5d [L_S]%5d \r", 
-//					(int)DIST_getNowVal(DIST_SEN_R_FRONT),
-//					(int)DIST_getNowVal(DIST_SEN_L_FRONT),
-//					(int)DIST_getNowVal(DIST_SEN_R_SIDE),
-//					(int)DIST_getNowVal(DIST_SEN_L_SIDE)
-//				);
+				printf("   距離センサ [R_F]%5d [L_F]%5d [R_S]%5d [L_S]%5d \r", 
+					(int)DIST_getNowVal(DIST_SEN_R_FRONT),
+					(int)DIST_getNowVal(DIST_SEN_L_FRONT),
+					(int)DIST_getNowVal(DIST_SEN_R_SIDE),
+					(int)DIST_getNowVal(DIST_SEN_L_SIDE)
+				);
 				TIME_wait( 300 );
 			}
 			break;
@@ -312,13 +316,6 @@ PRIVATE void MODE_exe0( void )
 
 		case MODE_5:
 			LED = LED_ALL_ON;
-			TIME_wait(100);
-			LED = LED_ALL_OFF;
-			CTRL_sta();
-			while(1){
-				printf("[encoder]%x\n\r",recv_spi_encoder());
-				TIME_wait(50);
-			}
 //			MAP_showLog();
 			break;
 
@@ -661,11 +658,11 @@ PUBLIC void INTC_sen( void )
 			break;
 		
 		case 1:		// 前壁センサ
-//			DIST_Pol_Front();
+			DIST_Pol_Front();
 			break;
 		
 		case 2:		// 横壁センサ
-//			DIST_Pol_Side();
+			DIST_Pol_Side();
 			break;
 		
 		case 3:		// 斜め壁センサ

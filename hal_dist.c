@@ -347,11 +347,11 @@ PUBLIC void DIST_getErrSkew( LONG* p_err )
 PUBLIC void DIST_Pol_Front( void )
 {
 	/* 無発光時の値取得 */
-	S12AD.ADANS0.WORD 		= 0x0012;		// AN1/4 変換対象設定
+	S12AD.ADANS0.WORD 		= 0x1200;		// AN1/4 変換対象設定
 	S12AD.ADCSR.BIT.ADST 		= 1;		// AD変換開始
 	while( S12AD.ADCSR.BIT.ADST == 1);		// AD変換待ち
-	st_sen[DIST_SEN_R_FRONT].s_offset = (SHORT)S12AD.ADDR4;
-	st_sen[DIST_SEN_L_FRONT].s_offset = (SHORT)S12AD.ADDR1;
+	st_sen[DIST_SEN_R_FRONT].s_offset = (SHORT)S12AD.ADDR12;
+	st_sen[DIST_SEN_L_FRONT].s_offset = (SHORT)S12AD.ADDR9;
 
 	/* 前壁LED点灯 */
 	LED_DIST_RF = ON;
@@ -361,13 +361,13 @@ PUBLIC void DIST_Pol_Front( void )
 	TIME_waitFree( SEN_WAIT_CNT );
 
 	/* 発光時の値と無発光時の値で差分を取得 */
-	S12AD.ADANS0.WORD 		= 0x0012;		// AN1/2 変換対象設定
+	S12AD.ADANS0.WORD 		= 0x1200;		// AN1/2 変換対象設定
 	S12AD.ADCSR.BIT.ADST 		= 1;		// AD変換開始
 	while( S12AD.ADCSR.BIT.ADST == 1);		// AD変換待ち
 	st_sen[DIST_SEN_R_FRONT].s_old = st_sen[DIST_SEN_R_FRONT].s_now;		// バッファリング
 	st_sen[DIST_SEN_L_FRONT].s_old = st_sen[DIST_SEN_L_FRONT].s_now;		// バッファリング
-	st_sen[DIST_SEN_R_FRONT].s_now = (SHORT)S12AD.ADDR4 - st_sen[DIST_SEN_R_FRONT].s_offset;		// 現在値書き換え
-	st_sen[DIST_SEN_L_FRONT].s_now = (SHORT)S12AD.ADDR1 - st_sen[DIST_SEN_L_FRONT].s_offset;		// 現在値書き換え
+	st_sen[DIST_SEN_R_FRONT].s_now = (SHORT)S12AD.ADDR12 - st_sen[DIST_SEN_R_FRONT].s_offset;		// 現在値書き換え
+	st_sen[DIST_SEN_L_FRONT].s_now = (SHORT)S12AD.ADDR9 - st_sen[DIST_SEN_L_FRONT].s_offset;		// 現在値書き換え
 	
 	/* 前壁LED消灯 */
 	LED_DIST_RF = OFF;
@@ -387,11 +387,11 @@ PUBLIC void DIST_Pol_Front( void )
 PUBLIC void DIST_Pol_Side( void )
 {
 	/* 無発光時の値取得 */
-	S12AD.ADANS0.WORD 		= 0x000C;		// AN2/3 変換対象設定
+	S12AD.ADANS0.WORD 		= 0x0C00;		// AN2/3 変換対象設定
 	S12AD.ADCSR.BIT.ADST 		= 1;		// AD変換開始
 	while( S12AD.ADCSR.BIT.ADST == 1);		// AD変換待ち
-	st_sen[DIST_SEN_R_SIDE].s_offset = (SHORT)S12AD.ADDR3;
-	st_sen[DIST_SEN_L_SIDE].s_offset = (SHORT)S12AD.ADDR2;
+	st_sen[DIST_SEN_R_SIDE].s_offset = (SHORT)S12AD.ADDR11;
+	st_sen[DIST_SEN_L_SIDE].s_offset = (SHORT)S12AD.ADDR10;
 
 	/* 横壁LED点灯 */
 	LED_DIST_RS = ON;
@@ -401,13 +401,13 @@ PUBLIC void DIST_Pol_Side( void )
 	TIME_waitFree( SEN_WAIT_CNT );
 
 	/* 発光時の値と無発光時の値で差分を取得 */
-	S12AD.ADANS0.WORD 		= 0x000C;		// AN0/3 変換対象設定
+	S12AD.ADANS0.WORD 		= 0x0C00;		// AN0/3 変換対象設定
 	S12AD.ADCSR.BIT.ADST 		= 1;		// AD変換開始
 	while( S12AD.ADCSR.BIT.ADST == 1);		// AD変換待ち
 	st_sen[DIST_SEN_R_SIDE].s_old = st_sen[DIST_SEN_R_SIDE].s_now;		// バッファリング
 	st_sen[DIST_SEN_L_SIDE].s_old = st_sen[DIST_SEN_L_SIDE].s_now;		// バッファリング
-	st_sen[DIST_SEN_R_SIDE].s_now = (SHORT)S12AD.ADDR3 - st_sen[DIST_SEN_R_SIDE].s_offset;		// 現在値書き換え
-	st_sen[DIST_SEN_L_SIDE].s_now = (SHORT)S12AD.ADDR2 - st_sen[DIST_SEN_L_SIDE].s_offset;		// 現在値書き換え
+	st_sen[DIST_SEN_R_SIDE].s_now = (SHORT)S12AD.ADDR11 - st_sen[DIST_SEN_R_SIDE].s_offset;		// 現在値書き換え
+	st_sen[DIST_SEN_L_SIDE].s_now = (SHORT)S12AD.ADDR10 - st_sen[DIST_SEN_L_SIDE].s_offset;		// 現在値書き換え
 	
 	/* 横壁LED消灯 */
 	LED_DIST_RS = OFF;

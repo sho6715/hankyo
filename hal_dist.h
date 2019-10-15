@@ -21,10 +21,10 @@
 // 定義（define）
 //**************************************************
 /* 距離センサ */
-#define		LED_DIST_RF		( PORTA.PODR.BIT.B6 )			// ビットアクセス
-#define		LED_DIST_RS		( PORTA.PODR.BIT.B4 )			// ビットアクセス
-#define		LED_DIST_LF		( PORTA.PODR.BIT.B1 )			// ビットアクセス
-#define		LED_DIST_LS		( PORTA.PODR.BIT.B3 )			// ビットアクセス
+#define		LED_DIST_RF		( PORTB.PODR.BIT.B5 )			// ビットアクセス
+#define		LED_DIST_RS		( PORTB.PODR.BIT.B3 )			// ビットアクセス
+#define		LED_DIST_LF		( PORTB.PODR.BIT.B0 )			// ビットアクセス
+#define		LED_DIST_LS		( PORTB.PODR.BIT.B1 )			// ビットアクセス
 
 //**************************************************
 // 列挙体（enum）

@@ -775,10 +775,12 @@ PUBLIC USHORT recv_spi(USHORT spi_ad)
 {
 	USHORT recv;
 	RSPI0.SPDR.WORD.H = spi_ad;
+//	RSPI0.SPDR.WORD = spi_ad;
 	
 	while(!RSPI0.SPSR.BIT.IDLNF);	//送信開始を確認
 	while(RSPI0.SPSR.BIT.IDLNF);		//RSPI0ｱｲﾄﾞﾙ状態か確認
 		recv = RSPI0.SPDR.WORD.H ;
+//		recv = RSPI0.SPDR.WORD ;
 
 	return(recv);
 }
@@ -796,9 +798,10 @@ PUBLIC USHORT recv_spi_who(void)
 {
 	USHORT recv;
 	USHORT whoami = (0x75|0x80);
+	USHORT write = (whoami<<8)+(0x00);
 	PORTC.PODR.BIT.B4 = 0;
-	recv = recv_spi(whoami);
-	recv = recv_spi(0x00);
+	recv = recv_spi(write);
+//	recv = recv_spi(0x00);
 	PORTC.PODR.BIT.B4 = 1;
 	return(recv);
 		
@@ -822,32 +825,32 @@ PUBLIC void recv_spi_init(void)
 	USHORT register27 = (0x1B|0x00);
 	
 	PORTC.PODR.BIT.B4 = 0;
-	recv = recv_spi(register107);
-	recv = recv_spi(0x80);
+	recv = recv_spi((register107<<8)+0x80);
+//	recv = recv_spi(0x80);
 	PORTC.PODR.BIT.B4 = 1;
 	TIME_wait(100);
 	
 	PORTC.PODR.BIT.B4 = 0;
-	recv = recv_spi(register106);
-	recv = recv_spi(0x01);
+	recv = recv_spi((register106<<8)+0x01);
+//	recv = recv_spi(0x01);
 	PORTC.PODR.BIT.B4 = 1;
 	TIME_wait(100);
 	
 	PORTC.PODR.BIT.B4 = 0;
-	recv = recv_spi(register112);
-	recv = recv_spi(0x40);
+	recv = recv_spi((register112<<8)+0x40);
+//	recv = recv_spi(0x40);
 	PORTC.PODR.BIT.B4 = 1;
 	TIME_wait(1);
 	
 	PORTC.PODR.BIT.B4 = 0;
-	recv = recv_spi(register27);
-	recv = recv_spi(0x30);
+	recv = recv_spi((register27<<8)+0x30);
+//	recv = recv_spi(0x30);
 	PORTC.PODR.BIT.B4 = 1;
 	TIME_wait(1);
 	
 	PORTC.PODR.BIT.B4 = 0;
-	recv = recv_spi(register107);
-	recv = recv_spi(0x00);
+	recv = recv_spi((register107<<8)+0x00);
+//	recv = recv_spi(0x00);
 	PORTC.PODR.BIT.B4 = 1;
 	TIME_wait(1);
 	
@@ -880,21 +883,21 @@ PUBLIC USHORT recv_spi_gyro(void)
 	USHORT gyro_L = (0x48|0x80);	//register72
 	
 	PORTC.PODR.BIT.B4 = 0;
-	TIME_waitFree(50);
-	recv1 = recv_spi(gyro_H);
-	recv1 = recv_spi(0x00);
+	TIME_waitFree(10);
+	recv1 = recv_spi((gyro_H<<8)+0x00);
+//	recv1 = recv_spi(0x00);
 	PORTC.PODR.BIT.B4 = 1;
 	
 	PORTC.PODR.BIT.B4 = 0;
-	TIME_waitFree(50);
-	recv2 = recv_spi(gyro_L);
-	recv2 = recv_spi(0x00);
+	TIME_waitFree(10);
+	recv2 = recv_spi((gyro_L<<8)+0x00);
+//	recv2 = recv_spi(0x00);
 	PORTC.PODR.BIT.B4 = 1;
 	
 	RSPI0.SPSR.BYTE = 0xA0;
 	
 	recv = (recv1<<8)+(recv2&0xFF);
-	
+//	recv = recv1;	
 	return(recv);
 		
 }
@@ -917,15 +920,15 @@ PUBLIC USHORT recv_spi_gyrooffset(void)
 	USHORT gyro_L = (0x24|0x80);	//register24
 	
 	PORTC.PODR.BIT.B4 = 0;
-	TIME_waitFree(50);
-	recv1 = recv_spi(gyro_H);
-	recv1 = recv_spi(0x00);
+	TIME_waitFree(10);
+	recv1 = recv_spi((gyro_H)+0x00);
+//	recv1 = recv_spi(0x00);
 	PORTC.PODR.BIT.B4 = 1;
 	
 	PORTC.PODR.BIT.B4 = 0;
-	TIME_waitFree(50);
-	recv2 = recv_spi(gyro_L);
-	recv2 = recv_spi(0x00);
+	TIME_waitFree(10);
+	recv2 = recv_spi((gyro_L)+0x00);
+//	recv2 = recv_spi(0x00);
 	PORTC.PODR.BIT.B4 = 1;
 	
 	RSPI0.SPSR.BYTE = 0xA0;
@@ -950,26 +953,27 @@ PUBLIC USHORT recv_spi_encoder(void)
 	USHORT recv1;
 	USHORT recv2;
 	
-	PORT4.PODR.BIT.B1 = 0;
-	TIME_waitFree(50);
-	recv1 = recv_spi(0x00);
-	recv2 = recv_spi(0x00);
-	PORT4.PODR.BIT.B1 = 1;
-
-	ENC_L_CNT = (recv1<<8)+(recv2&0xFF);
-	
 	PORT4.PODR.BIT.B2 = 0;
-	TIME_waitFree(50);
-	recv1 = recv_spi(0x00);
-	recv2 = recv_spi(0x00);
+	TIME_waitFree(10);
+	recv1 = recv_spi(0x0000);
+//	recv2 = recv_spi(0x00);
 	PORT4.PODR.BIT.B2 = 1;
+
+//	ENC_L_CNT = (recv1<<8)+(recv2&0xFF);
+	ENC_L_CNT = recv1;
+
+	RSPI0.SPSR.BYTE = 0xA0;
+	
+	PORT4.PODR.BIT.B1 = 0;
+	TIME_waitFree(10);
+	recv2 = recv_spi(0x0000);
+//	recv2 = recv_spi(0x00);
+	PORT4.PODR.BIT.B1 = 1;
 	
 	RSPI0.SPSR.BYTE = 0xA0;
 	
-	ENC_R_CNT = (recv1<<8)+(recv2&0xFF);
-
-	return(recv1);
-	
+//	ENC_R_CNT = (recv1<<8)+(recv2&0xFF);
+	ENC_R_CNT = recv2;
 }
 
 // *************************************************************************

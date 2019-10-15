@@ -374,7 +374,7 @@ PUBLIC void init_spi(void)
 	PORT4.PDR.BIT.B1 = 1;
 	
 	RSPI0.SPBR		= 2;
-	RSPI0.SPCMD0.WORD	= 0x0783;	
+	RSPI0.SPCMD0.WORD	= 0x0f83;	
 	
 	RSPI0.SPCR.BYTE = 0xF8;
 
