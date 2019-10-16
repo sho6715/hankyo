@@ -6,7 +6,7 @@
   <Device>RX630</Device>
   <OperationTab>
     <Endian>RFLG_ENDIAN_LITTLE</Endian>
-    <ProgramFile>C:\Users\hosei\Desktop\half\DefaultBuild\halfmouse.mot</ProgramFile>
+    <ProgramFile>C:\Users\hosei\Desktop\half\half\DefaultBuild\halfmouse.mot</ProgramFile>
   </OperationTab>
   <OperationSettingTab>
     <FillCode>False</FillCode>

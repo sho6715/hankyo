@@ -999,15 +999,15 @@ PUBLIC void ENC_GetDiv( LONG* p_r, LONG* p_l )
 	//実際に組み上げてから正逆の加算チェックを行う
 //	if(acc_now > 0){	//正方向カウント
 		//右
-		if(cntR_dif>0){
-			cntR = cntR_dif - 360;
+		if(cntR_dif<0){
+			cntR = cntR_dif + 360;
 		}
 		else{
 			cntR = cntR_dif;
 		}
 		//左
-		if(cntR_dif>0){
-			cntL = cntR_dif - 360;
+		if(cntL_dif>0){
+			cntL = cntL_dif - 360;
 		}
 		else{
 			cntL = cntL_dif;
@@ -1016,14 +1016,14 @@ PUBLIC void ENC_GetDiv( LONG* p_r, LONG* p_l )
 	else{
 		//右
 		if(cntR_dif>0){
-			cntR = cntR_dif + 360;
+			cntR = cntR_dif - 360;
 		}
 		else{
 			cntR = cntR_dif;
 		}
 		//左
-		if(cntR_dif>0){
-			cntL = cntR_dif + 360;
+		if(cntL_dif<0){
+			cntL = cntL_dif + 360;
 		}
 		else{
 			cntL = cntL_dif;
@@ -1048,7 +1048,7 @@ PUBLIC void ENC_GetDiv( LONG* p_r, LONG* p_l )
 // *************************************************************************/
 PUBLIC void ENC_print(void)
 {
-	printf("エンコーダ [R]=%d [L]=%d \r",ENC_R_CNT,ENC_L_CNT);
+	printf("エンコーダ [R]=%d [L]=%d \r",ENC_R_CNT*360/65536,ENC_L_CNT*360/65536);
 }
 
 // *************************************************************************
