@@ -1037,6 +1037,21 @@ PUBLIC void ENC_GetDiv( LONG* p_r, LONG* p_l )
 }
 
 // *************************************************************************
+//   機能		： エンコーダの初期化
+//   注意		： なし
+//   メモ		： なし
+//   引数		： なし
+//   返り値		： なし
+// **************************    履    歴    *******************************
+// 		v1.0		2019.10.12			sato			新規
+// *************************************************************************/
+PUBLIC void ENC_setref(void)
+{
+	recv_spi_encoder();
+	ENC_R_CNT_old = ENC_R_CNT;
+	ENC_L_CNT_old = ENC_L_CNT;
+}
+// *************************************************************************
 //   機能		： エンコーダの絶対角(deg)を取得する
 //   注意		： なし
 //   メモ		： なし
@@ -2201,7 +2216,7 @@ PUBLIC void CTRL_pol( void )
 			f_duty10_L = f_feedFoard_angle * FF_BALANCE_L        - f_angleCtrl - f_angleSpeedCtrl +  f_distCtrl + f_speedCtrl;		// 左モータPWM-DUTY比[0.1%]
 		}
 	}
-	
+
 	CTRL_outMot( f_duty10_R, f_duty10_L );				// モータへ出力
 
 	f_Time += 0.001;

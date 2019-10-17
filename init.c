@@ -275,7 +275,7 @@ PRIVATE void init_tpu(void)
 	TPU0.TCR.BIT.CKEG			= 1;		// CKEG立ち上がりエッジでカウント
 	TPU0.TCR.BIT.TPSC 			= 1;		// PCLK(48MHz)/4 で1カウント
 	TPU0.TMDR.BIT.MD			= 3;		// PWM モード 2
-//	TPU0.TIORH.BIT.IOA			= 2;		// TIOCA 端子の機能 : 初期出力は 0 出力。コンペアマッチで 1 出力
+	TPU0.TIORH.BIT.IOA			= 1;		// TIOCA 端子の機能 : 初期出力は 0 出力。コンペアマッチで 0 出力
 	TPU0.TIORH.BIT.IOB			= 2;		// TIOCB 端子の機能 : 初期出力は 0 出力。コンペアマッチで 1 出力
 	TPU0.TGRA 				= 240;		// 周期(usec)
 	TPU0.TGRB 				= 120;		// onDuty
@@ -288,7 +288,7 @@ PRIVATE void init_tpu(void)
 	TPU1.TCR.BIT.CKEG			= 1;		// CKEG立ち上がりエッジでカウント
 	TPU1.TCR.BIT.TPSC 			= 1;		// PCLK(48MHz)/4 で1カウント
 	TPU1.TMDR.BIT.MD			= 3;		// PWM モード 2
-//	TPU1.TIORH.BIT.IOA			= 2;		// TIOCA 端子の機能 : 初期出力は 0 出力。コンペアマッチで 1 出力
+	TPU1.TIOR.BIT.IOA			= 1;		// TIOCA 端子の機能 : 初期出力は 0 出力。コンペアマッチで 0 出力
 	TPU1.TIOR.BIT.IOB			= 2;		// TIOCB 端子の機能 : 初期出力は 0 出力。コンペアマッチで 1 出力
 	TPU1.TGRA 				= 240;		// 周期(usec)
 	TPU1.TGRB 				= 120;		// onDuty

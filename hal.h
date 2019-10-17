@@ -129,6 +129,7 @@ PUBLIC USHORT recv_spi_gyrooffset(void);
 PUBLIC USHORT recv_spi_encoder(void);
 PUBLIC UCHAR Runmode_check( void );
 PUBLIC void ENC_GetDiv( LONG* p_r, LONG* p_l );
+PUBLIC void ENC_setref(void);
 PUBLIC void ENC_print(void);
 
 /* DCM */

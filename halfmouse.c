@@ -307,6 +307,12 @@ PRIVATE void MODE_exe0( void )
 
 		case MODE_4:
 			LED = LED_ALL_ON;
+			CTRL_clrData();
+			MOT_setTrgtSpeed(SEARCH_SPEED);
+			MOT_setSuraStaSpeed( (FLOAT)SEARCH_SPEED );							// スラローム開始速度設定
+			PARAM_setSpeedType( PARAM_ST,   PARAM_SLOW );							// [直進] 速度普通
+			PARAM_setSpeedType( PARAM_TRUN, PARAM_SLOW );							// [旋回] 速度普通
+			PARAM_setSpeedType( PARAM_SLA,  PARAM_SLOW );							// [スラ] 速度普通
 			CTRL_sta();
 			while(1){
 				ENC_print();
@@ -379,6 +385,7 @@ PRIVATE void MODE_exe( void )
 //	USHORT *read;
 //	enMAP_HEAD_DIR		en_endDir;
 	GYRO_SetRef();
+	ENC_setref();
 	Failsafe_flag_off();
 //	log_flag_on();	//ログ関数実行用フラグ　大会時には削除
 	/* モード表示 */
@@ -408,23 +415,22 @@ PRIVATE void MODE_exe( void )
 
 		case MODE_1:
 			LED = LED_ALL_ON;
-			CTRL_sta();
-//			DCM_staMot(DCM_R);
+	//		CTRL_sta();
+			DCM_staMot(DCM_R);
 			DCM_staMot(DCM_L);
-//			DCM_setDirCcw(DCM_R);
+			DCM_setDirCcw(DCM_R);
 			DCM_setDirCcw(DCM_L);
-//			DCM_setPwmDuty(DCM_R,200);
+			DCM_setPwmDuty(DCM_R,200);
 			DCM_setPwmDuty(DCM_L,200);
-			while(1){
-				ENC_print();
-				TIME_wait(50);
-			}
+			TIME_wait(1000);
+			DCM_brakeMot(DCM_R);
+			DCM_brakeMot(DCM_L);
 		
 			break;
 			
 		case MODE_2:
 			LED = LED_ALL_ON;
-			
+			MOT_goBlock_FinSpeed( 1.0, 0 );
 			break;
 
 		case MODE_3:	
