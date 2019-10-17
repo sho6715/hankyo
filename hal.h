@@ -22,10 +22,10 @@
 // 定義（define）
 //**************************************************
 /* 迷路距離 */
-#define HALF_BLOCK			( 45.0f*2 )					// 半区間 [mm]
-#define BLOCK				( 90.0f*2 )					// １区間 [mm]
-#define HALF_BLOCK_SKEW			( 63.64f*2 )				// 斜め半区間 [mm]
-#define BLOCK_SKEW			( 127.28f*2 )				// 斜め１区間 [mm]
+#define HALF_BLOCK			( 45.0f )					// 半区間 [mm]
+#define BLOCK				( 90.0f )					// １区間 [mm]
+#define HALF_BLOCK_SKEW			( 63.64f )				// 斜め半区間 [mm]
+#define BLOCK_SKEW			( 127.28f )				// 斜め１区間 [mm]
 
 #define IS_R_SLA(a)			( ( (a) % 2 == 0 ) ? (TRUE) : (FALSE))
 
@@ -127,6 +127,7 @@ PUBLIC USHORT recv_spi_gyrooffset(void);
 
 /* エンコーダ */
 PUBLIC USHORT recv_spi_encoder(void);
+PUBLIC UCHAR Runmode_check( void );
 PUBLIC void ENC_GetDiv( LONG* p_r, LONG* p_l );
 PUBLIC void ENC_print(void);
 

@@ -27,9 +27,7 @@
 #define		BAT_GOOD			(3060)			// 残量減ってきた（黄色）、1セル3.7V以上： 3060 = ( 3700mV * 1セル ) / 1.5(分圧) / 3300 * 4096 - 1
 #define		BAT_LOW				(2812)			// 残量やばい！！（赤色）、1セル3.4V以上： 2812 = ( 3400mV * 1セル ) / 1.5(分圧) / 3300 * 4096 - 1
 #define		GYRO_REF_NUM		(200)		//ジャイロのリファレンス値をサンプリングする数
-#define		ENC_RESET_VAL		(32768)			// エンコーダの中間値
-/*後日削除*/#define		ENC_R_TSTR			(TPUA.TSTR.BIT.CST1)	// 右エンコーダパルスカウント開始
-/*後日削除*/#define		ENC_L_TSTR			(TPUA.TSTR.BIT.CST2)	// 左エンコーダパルスカウント開始
+//#define		ENC_RESET_VAL		(32768)			// エンコーダの中間値
 #define		DCM_R_IN			(PORT3.PODR.BIT.B1)		// DCM右IN
 #define		DCM_L_IN			(PORT1.PODR.BIT.B5)		// DCM左IN
 #define		DCM_R_TIMER			(TPUA.TSTR.BIT.CST0)	// DCM右タイマ開始
@@ -49,16 +47,12 @@
 /* 調整パラメータ */
 #define VCC_MAX						( 4.2f )									// バッテリ最大電圧[V]、4.2[V]×1[セル]
 #define TIRE_R						( 13.0f )	//推定値								// タイヤ直径 [mm]
-#define GEAR_RATIO					( 36 / 9 )									// ギア比(スパー/ピニオン)
-#define ROTATE_PULSE				( 2048 )									// 1周のタイヤパルス数
-#define DIST_1STEP					( PI * TIRE_R / GEAR_RATIO / ROTATE_PULSE )				// 1パルスで進む距離 [mm]
+//#define GEAR_RATIO					( 36 / 9 )									// ギア比(スパー/ピニオン)
+#define ROTATE_PULSE				( 65536 )									// 1周の最大数値
+#define DIST_1STEP					( PI * TIRE_R / ROTATE_PULSE )				// 1パルスで進む距離 [mm]
 #define F_CNT2MM(cnt)				( (FLOAT)cnt * DIST_1STEP )				// [カウント値]から[mm]へ換算
-#define MOT_MOVE_ST_THRESHOLD			( 25 )							// 直進移動距離の閾値[mm]
-#define MOT_MOVE_ST_MIN					( 20 )							// 直進移動距離の最低移動量[mm]
-//#define MOT_ACC						( 1800 )						// 直進移動の加速度[mm/s2]
-//#define MOT_DEC						( 1800 )						// 直進移動の減速度[mm/s2]
-//#define MOT_ACC_ANGLE					( 1800 )		//旋回の角加速度[mm/s2]
-//#define MOT_DEC_ANGLE					( 1800 )		//旋回の角減速度[mm/s2]
+#define MOT_MOVE_ST_THRESHOLD			( 13 )							// 直進移動距離の閾値[mm]
+#define MOT_MOVE_ST_MIN					( 10 )							// 直進移動距離の最低移動量[mm]
 
 //20170815 超信地旋回実装時に追加
 #define A1_MIN					( 25 )						// 第1最低移動角度
@@ -70,10 +64,6 @@
 #define ANGLE_OFFSET2_R				( 0 )	//3
 #define ANGLE_OFFSET2				( 0 )						// 角度のオフセット値（バッファリングによる誤差を埋めるための値）
 #define ANGLE_OFFSET3				( 0 )					// 角度のオフセット値（バッファリングによる誤差を埋めるための値）
-
-//#define MOT_MOVE_ST_THRESHOLD			( 25 )						// 直進移動距離の閾値[mm]
-//#define MOT_MOVE_ST_MIN				( 20 )						// 直進移動距離の最低移動量[mm]
-
 
 #define log_num			(1000)					//ログ取得数（変更時はこちらを変更）
 
@@ -105,6 +95,13 @@ typedef enum{
 	CTRL_MAX,
 
 }enCTRL_TYPE;
+
+/*動作タイプ（超信地旋回用）*/
+typedef enum{
+	Right,
+	Left,
+	MAX,
+}en_TURNTYPE;
 
 
 /* 動作タイプ */
@@ -242,9 +239,12 @@ PRIVATE BOOL			bl_IsWallEdge = FALSE;				// 壁切れ検知（TRUE:検知、FALSE：非検知
 PRIVATE FLOAT			f_WallEdgeAddDist = 0;				// 壁切れ補正の移動距離
 
 //フェイルセーフ
-PUBLIC FLOAT  f_ErrChkAngle; 			  // ジャイロセンサのエラー検出用の角度
-PUBLIC BOOL   bl_ErrChk; 				  // ジャイロセンサのエラー検出（FALSE：検知しない、TRUE：検知する）
+PUBLIC FLOAT  			f_ErrChkAngle; 			  // ジャイロセンサのエラー検出用の角度
+PUBLIC BOOL   			bl_ErrChk; 				  // ジャイロセンサのエラー検出（FALSE：検知しない、TRUE：検知する）
 PRIVATE BOOL			bl_failsafe		= FALSE;	// マウスがの制御不能（TRUE：制御不能、FALSE：制御可能）
+
+//ターン用旋回方向
+PRIVATE en_TURNTYPE		en_Turntype;			//ターン方向決定
 
 //ログプログラム群（取得数変更はdefineへ）
 PRIVATE	FLOAT	Log_1[log_num];
@@ -578,11 +578,8 @@ PUBLIC void BAT_Pol( void )
 	/* ======================= */
 	if( us_BatLvAve < BAT_LOW ) {			// 残量やばい！！（赤色）
 		LEDG = OFF;
-//		LEDR = ON;
 	}
 	else if( us_BatLvAve < BAT_GOOD ) {		// 残量減ってきた（黄色）
-//		LEDG = ON;
-//		LEDR = ON;
 		
 		if( i==50 ){
 			LEDG = ~LEDG;	//Lチカ
@@ -591,11 +588,9 @@ PUBLIC void BAT_Pol( void )
 		else{
 			i++;
 		}
-		
 	}
 	else{									// 残量問題なし（緑色）
 		LEDG = ON;
-//		LEDR = OFF;
 	}
 }
 
@@ -775,12 +770,10 @@ PUBLIC USHORT recv_spi(USHORT spi_ad)
 {
 	USHORT recv;
 	RSPI0.SPDR.WORD.H = spi_ad;
-//	RSPI0.SPDR.WORD = spi_ad;
 	
 	while(!RSPI0.SPSR.BIT.IDLNF);	//送信開始を確認
 	while(RSPI0.SPSR.BIT.IDLNF);		//RSPI0ｱｲﾄﾞﾙ状態か確認
 		recv = RSPI0.SPDR.WORD.H ;
-//		recv = RSPI0.SPDR.WORD ;
 
 	return(recv);
 }
@@ -801,7 +794,6 @@ PUBLIC USHORT recv_spi_who(void)
 	USHORT write = (whoami<<8)+(0x00);
 	PORTC.PODR.BIT.B4 = 0;
 	recv = recv_spi(write);
-//	recv = recv_spi(0x00);
 	PORTC.PODR.BIT.B4 = 1;
 	return(recv);
 		
@@ -826,43 +818,29 @@ PUBLIC void recv_spi_init(void)
 	
 	PORTC.PODR.BIT.B4 = 0;
 	recv = recv_spi((register107<<8)+0x80);
-//	recv = recv_spi(0x80);
 	PORTC.PODR.BIT.B4 = 1;
 	TIME_wait(100);
 	
 	PORTC.PODR.BIT.B4 = 0;
 	recv = recv_spi((register106<<8)+0x01);
-//	recv = recv_spi(0x01);
 	PORTC.PODR.BIT.B4 = 1;
 	TIME_wait(100);
 	
 	PORTC.PODR.BIT.B4 = 0;
 	recv = recv_spi((register112<<8)+0x40);
-//	recv = recv_spi(0x40);
 	PORTC.PODR.BIT.B4 = 1;
 	TIME_wait(1);
 	
 	PORTC.PODR.BIT.B4 = 0;
 	recv = recv_spi((register27<<8)+0x30);
-//	recv = recv_spi(0x30);
 	PORTC.PODR.BIT.B4 = 1;
 	TIME_wait(1);
 	
 	PORTC.PODR.BIT.B4 = 0;
 	recv = recv_spi((register107<<8)+0x00);
-//	recv = recv_spi(0x00);
 	PORTC.PODR.BIT.B4 = 1;
 	TIME_wait(1);
-	
-	/*read*/
-/*
-	PORTC.PODR.BIT.B4 = 0;
-	recv = recv_spi(register27|0x80);
-	recv = recv_spi(0x00);
-	PORTC.PODR.BIT.B4 = 1;
-	
-	return(recv);
-*/
+
 }
 
 // *************************************************************************
@@ -884,20 +862,16 @@ PUBLIC USHORT recv_spi_gyro(void)
 	
 	PORTC.PODR.BIT.B4 = 0;
 	TIME_waitFree(10);
-	recv1 = recv_spi((gyro_H<<8)+0x00);
-//	recv1 = recv_spi(0x00);
 	PORTC.PODR.BIT.B4 = 1;
 	
 	PORTC.PODR.BIT.B4 = 0;
 	TIME_waitFree(10);
 	recv2 = recv_spi((gyro_L<<8)+0x00);
-//	recv2 = recv_spi(0x00);
 	PORTC.PODR.BIT.B4 = 1;
 	
 	RSPI0.SPSR.BYTE = 0xA0;
 	
 	recv = (recv1<<8)+(recv2&0xFF);
-//	recv = recv1;	
 	return(recv);
 		
 }
@@ -922,13 +896,11 @@ PUBLIC USHORT recv_spi_gyrooffset(void)
 	PORTC.PODR.BIT.B4 = 0;
 	TIME_waitFree(10);
 	recv1 = recv_spi((gyro_H)+0x00);
-//	recv1 = recv_spi(0x00);
 	PORTC.PODR.BIT.B4 = 1;
 	
 	PORTC.PODR.BIT.B4 = 0;
 	TIME_waitFree(10);
 	recv2 = recv_spi((gyro_L)+0x00);
-//	recv2 = recv_spi(0x00);
 	PORTC.PODR.BIT.B4 = 1;
 	
 	RSPI0.SPSR.BYTE = 0xA0;
@@ -956,10 +928,8 @@ PUBLIC USHORT recv_spi_encoder(void)
 	PORT4.PODR.BIT.B2 = 0;
 	TIME_waitFree(10);
 	recv1 = recv_spi(0x0000);
-//	recv2 = recv_spi(0x00);
 	PORT4.PODR.BIT.B2 = 1;
 
-//	ENC_L_CNT = (recv1<<8)+(recv2&0xFF);
 	ENC_L_CNT = recv1;
 
 	RSPI0.SPSR.BYTE = 0xA0;
@@ -967,13 +937,40 @@ PUBLIC USHORT recv_spi_encoder(void)
 	PORT4.PODR.BIT.B1 = 0;
 	TIME_waitFree(10);
 	recv2 = recv_spi(0x0000);
-//	recv2 = recv_spi(0x00);
 	PORT4.PODR.BIT.B1 = 1;
 	
 	RSPI0.SPSR.BYTE = 0xA0;
 	
-//	ENC_R_CNT = (recv1<<8)+(recv2&0xFF);
 	ENC_R_CNT = recv2;
+}
+
+// *************************************************************************
+//   機能		： エンコーダのカウント方向を決定する
+//   注意		： なし
+//   メモ		： なし
+//   引数		： なし
+//   返り値		： なし
+// **************************    履    歴    *******************************
+// 		v1.0		2019.10.17			sato			新規
+// *************************************************************************/
+PUBLIC UCHAR Runmode_check( enDCM_ID en_id )
+{
+	if(en_id == DCM_R){
+		if((en_Type == 6)||(((en_Type == 7)||(en_Type == 8)||(en_Type == 9))&&(en_Turntype == Right)) ){
+			return(0);
+		}
+		else{
+			return(1);
+		}
+	}
+	else{
+		if((en_Type == 6)||(((en_Type == 7)||(en_Type == 8)||(en_Type == 9))&&(en_Turntype == Left)) ){
+			return(0);
+		}
+		else{
+			return(1);
+		}
+	}
 }
 
 // *************************************************************************
@@ -987,17 +984,16 @@ PUBLIC USHORT recv_spi_encoder(void)
 // *************************************************************************/
 PUBLIC void ENC_GetDiv( LONG* p_r, LONG* p_l )
 {
-	SHORT cntR;
-	SHORT cntL;
-	SHORT cntR_dif;
-	SHORT cntL_dif;
+	LONG cntR;
+	LONG cntL;
+	LONG cntR_dif;
+	LONG cntL_dif;
 	recv_spi_encoder();
-	cntR_dif = ENC_R_CNT_old/ 2048 - ENC_R_CNT/ 2048;
-	cntL_dif = ENC_L_CNT_old/ 2048 - ENC_L_CNT/ 2048;
+	cntR_dif = ENC_R_CNT - ENC_R_CNT_old;
+	cntL_dif = ENC_L_CNT_old - ENC_L_CNT;
 
 	//モードを使って正逆をチェックして加算方法を決める
-	//実際に組み上げてから正逆の加算チェックを行う
-//	if(acc_now > 0){	//正方向カウント
+	if(Runmode_check(DCM_R) == 1){	//正方向カウント
 		//右
 		if(cntR_dif<0){
 			cntR = cntR_dif + 360;
@@ -1005,22 +1001,17 @@ PUBLIC void ENC_GetDiv( LONG* p_r, LONG* p_l )
 		else{
 			cntR = cntR_dif;
 		}
-		//左
-		if(cntL_dif>0){
-			cntL = cntL_dif - 360;
-		}
-		else{
-			cntL = cntL_dif;
-		}
-/*	}
+	}
 	else{
-		//右
 		if(cntR_dif>0){
 			cntR = cntR_dif - 360;
 		}
 		else{
 			cntR = cntR_dif;
 		}
+	}
+
+	if(Runmode_check(DCM_L) == 1){
 		//左
 		if(cntL_dif<0){
 			cntL = cntL_dif + 360;
@@ -1029,8 +1020,16 @@ PUBLIC void ENC_GetDiv( LONG* p_r, LONG* p_l )
 			cntL = cntL_dif;
 		}
 	}
-*/
-	*p_r = cntR;		//2^11(2048) LSB/1回転
+	else{
+		if(cntL_dif>0){
+			cntL = cntL_dif - 360;
+		}
+		else{
+			cntL = cntL_dif;
+		}
+	}
+
+	*p_r = cntR;		//2^16(65536) LSB/1回転
 	*p_l = cntL;
 
 	ENC_R_CNT_old = ENC_R_CNT;
@@ -1038,7 +1037,7 @@ PUBLIC void ENC_GetDiv( LONG* p_r, LONG* p_l )
 }
 
 // *************************************************************************
-//   機能		： エンコーダのカウント値（偏差）を取得する
+//   機能		： エンコーダの絶対角(deg)を取得する
 //   注意		： なし
 //   メモ		： なし
 //   引数		： なし
@@ -1139,7 +1138,7 @@ PUBLIC void DCM_brakeMot( enDCM_ID en_id )
 	else{							// 左
 		DCM_L_IN = ON;				// AIN1
 		DCM_L_TIMER = OFF;			// タイマ停止
-	    	DCM_L_TIORB = 1;			// TIOCB 端子の機能 : 初期出力は 0 出力。コンペアマッチで 0 出力
+	    DCM_L_TIORB = 1;			// TIOCB 端子の機能 : 初期出力は 0 出力。コンペアマッチで 0 出力
 	}
 }
 
@@ -2062,9 +2061,6 @@ PRIVATE void CTRL_outMot( FLOAT f_duty10_R, FLOAT f_duty10_L )
 	/* 電圧に応じてPWM出力を変更する */
 	f_duty10_R = f_duty10_R * VCC_MAX / (BAT_getLv()/1000);
 	f_duty10_L = f_duty10_L * VCC_MAX / (BAT_getLv()/1000);
-	
-//	f_Duty_R = f_duty10_R;
-//	f_Duty_L = f_duty10_L;
 	
 //	log_in(f_duty10_R);
 	/* 右モータ */
@@ -3040,6 +3036,7 @@ PUBLIC void MOT_turn( enMOT_TURN_CMD en_type )
 		f_angle3 			*= -1;															// 回転方向を逆にする
 		st_info.f_angle1	= f_angle1;						// 第1移動角度[rad]
 		st_info.f_angle1_2	= st_info.f_angle - f_angle3;									// 第1+2移動角度[rad]
+		en_Turntype			= Right;
 		
 		/* 最小移動距離を上書き */
 		if( st_info.f_angle1 > ( A1_MIN * -1 ) ){
@@ -3049,7 +3046,8 @@ PUBLIC void MOT_turn( enMOT_TURN_CMD en_type )
 	else{
 		st_info.f_angle1	= f_angle1;						// 第1移動角度[rad]
 		st_info.f_angle1_2	= st_info.f_angle - f_angle3;									// 第1+2移動角度[rad]
-		
+		en_Turntype			= Left;
+
 		/* 最小移動距離を上書き */
 		if( st_info.f_angle1 < A1_MIN ){
 			st_info.f_angle1 = A1_MIN;

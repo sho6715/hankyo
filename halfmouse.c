@@ -408,12 +408,13 @@ PRIVATE void MODE_exe( void )
 
 		case MODE_1:
 			LED = LED_ALL_ON;
-			DCM_staMot(DCM_R);
-		//	DCM_staMot(DCM_L);
-			DCM_setDirCcw(DCM_R);
-		//	DCM_setDirCcw(DCM_L);
-			DCM_setPwmDuty(DCM_R,200);
-		//	DCM_setPwmDuty(DCM_L,200);
+			CTRL_sta();
+//			DCM_staMot(DCM_R);
+			DCM_staMot(DCM_L);
+//			DCM_setDirCcw(DCM_R);
+			DCM_setDirCcw(DCM_L);
+//			DCM_setPwmDuty(DCM_R,200);
+			DCM_setPwmDuty(DCM_L,200);
 			while(1){
 				ENC_print();
 				TIME_wait(50);
