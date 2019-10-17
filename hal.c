@@ -2094,12 +2094,12 @@ PRIVATE void CTRL_outMot( FLOAT f_duty10_R, FLOAT f_duty10_L )
 
 	/* 左モータ */
 	if( 20 < f_duty10_L ){									// 前進
-		DCM_setDirCcw( DCM_L );
+		DCM_setDirCw( DCM_L );
 		DCM_setPwmDuty( DCM_L, (USHORT)f_duty10_L );
 	}
 	else if( f_duty10_L < -20 ){							// 後退
 		f_temp = f_duty10_L * -1;
-		DCM_setDirCw( DCM_L );
+		DCM_setDirCcw( DCM_L );
 		DCM_setPwmDuty( DCM_L, (USHORT)f_temp );
 	}
 	else{

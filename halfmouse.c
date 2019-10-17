@@ -308,12 +308,8 @@ PRIVATE void MODE_exe0( void )
 		case MODE_4:
 			LED = LED_ALL_ON;
 			CTRL_clrData();
-			MOT_setTrgtSpeed(SEARCH_SPEED);
-			MOT_setSuraStaSpeed( (FLOAT)SEARCH_SPEED );							// スラローム開始速度設定
-			PARAM_setSpeedType( PARAM_ST,   PARAM_SLOW );							// [直進] 速度普通
-			PARAM_setSpeedType( PARAM_TRUN, PARAM_SLOW );							// [旋回] 速度普通
-			PARAM_setSpeedType( PARAM_SLA,  PARAM_SLOW );							// [スラ] 速度普通
-			CTRL_sta();
+			turntable();
+//			CTRL_sta();
 			while(1){
 				ENC_print();
 				TIME_wait(50);
