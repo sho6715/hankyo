@@ -23,9 +23,9 @@
 #define		SW_CHATTERING_WAIT		(200) 		//スイッチのチャタリング対策
 
 #define	FF_BALANCE_R				( 1.00f )					// [FF] 右のバランス係数
-#define	FF_BALANCE_L				( 1.00f )					// [FF] 左のバランス係数 
+#define	FF_BALANCE_L				( 1.50f )					// [FF] 左のバランス係数 
 #define FF_HIT_BALANCE_R			(1.00f)						//バック時のバランス係数
-#define FF_HIT_BALANCE_L			(1.00f)
+#define FF_HIT_BALANCE_L			(1.50f)
 
 #define SEARCH_SPEED				(300)
 

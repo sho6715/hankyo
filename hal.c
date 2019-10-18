@@ -46,7 +46,7 @@
 
 /* 調整パラメータ */
 #define VCC_MAX						( 4.2f )									// バッテリ最大電圧[V]、4.2[V]×1[セル]
-#define TIRE_R						( 13.0f )	//推定値								// タイヤ直径 [mm]
+#define TIRE_R						( 12.6f )	//推定値								// タイヤ直径 [mm]
 //#define GEAR_RATIO					( 36 / 9 )									// ギア比(スパー/ピニオン)
 #define ROTATE_PULSE				( 65536 )									// 1周の最大数値
 #define DIST_1STEP					( PI * TIRE_R / ROTATE_PULSE )				// 1パルスで進む距離 [mm]
@@ -862,6 +862,7 @@ PUBLIC USHORT recv_spi_gyro(void)
 	
 	PORTC.PODR.BIT.B4 = 0;
 	TIME_waitFree(10);
+	recv1 = recv_spi((gyro_H<<8)+0x00);
 	PORTC.PODR.BIT.B4 = 1;
 	
 	PORTC.PODR.BIT.B4 = 0;
@@ -995,16 +996,16 @@ PUBLIC void ENC_GetDiv( LONG* p_r, LONG* p_l )
 	//モードを使って正逆をチェックして加算方法を決める
 	if(Runmode_check(DCM_R) == 1){	//正方向カウント
 		//右
-		if(cntR_dif<0){
-			cntR = cntR_dif + 360;
+		if(cntR_dif<-32768){
+			cntR = cntR_dif + 65536;
 		}
 		else{
 			cntR = cntR_dif;
 		}
 	}
 	else{
-		if(cntR_dif>0){
-			cntR = cntR_dif - 360;
+		if(cntR_dif>32768){
+			cntR = cntR_dif - 65536;
 		}
 		else{
 			cntR = cntR_dif;
@@ -1013,16 +1014,16 @@ PUBLIC void ENC_GetDiv( LONG* p_r, LONG* p_l )
 
 	if(Runmode_check(DCM_L) == 1){
 		//左
-		if(cntL_dif<0){
-			cntL = cntL_dif + 360;
+		if(cntL_dif<-32768){
+			cntL = cntL_dif + 65536;
 		}
 		else{
 			cntL = cntL_dif;
 		}
 	}
 	else{
-		if(cntL_dif>0){
-			cntL = cntL_dif - 360;
+		if(cntL_dif>32768){
+			cntL = cntL_dif - 65536;
 		}
 		else{
 			cntL = cntL_dif;
@@ -1301,9 +1302,9 @@ PUBLIC void CTRL_stop( void )
 // *************************************************************************/
 PUBLIC void CTRL_clrData( void )
 {
-	recv_spi_encoder();								// エンコーダモジュール初期化
-	ENC_R_CNT_old	= ENC_R_CNT;
-	ENC_L_CNT_old	= ENC_L_CNT;
+//	recv_spi_encoder();								// エンコーダモジュール初期化
+//	ENC_R_CNT_old	= ENC_R_CNT;
+//	ENC_L_CNT_old	= ENC_L_CNT;
 	l_CntR			= 0;						// カウンタクリア
 	l_CntL			= 0;						// カウンタクリア
 	
@@ -1917,7 +1918,7 @@ PUBLIC void CTRL_getAngleSpeedFB( FLOAT* p_err )
 		f_AngleSErrSum = -100;
 	}
 	
-	templog2 = f_AngleSErrSum;
+//	templog2 = f_AngleSErrSum;
 	*p_err = f_err * f_kp + f_AngleSErrSum + ( f_err - f_ErrAngleSBuf ) * f_kd;		// PID制御
 		
 	f_ErrAngleSBuf = f_err;		// 偏差をバッファリング	
@@ -2158,6 +2159,9 @@ PUBLIC void CTRL_pol( void )
 	CTRL_refNow();									// 制御に使用する値を現在の状態に更新
 	CTRL_refTarget();								// 制御に使用する値を目標値に更新
 
+	templog1 = l_CntR;
+	templog2 = l_CntL;
+
 	/* 制御値取得 */
 	CTRL_getFF_speed( &f_feedFoard_speed );					// [制御] フィードフォワード
 	CTRL_getFF_angle( &f_feedFoard_angle );					// [制御] フィードフォワード
@@ -2167,7 +2171,7 @@ PUBLIC void CTRL_pol( void )
 	CTRL_getAngleFB( &f_angleCtrl );				// [制御] 角度
 	CTRL_getSenFB( &f_distSenCtrl );				// [制御] 壁
 	
-	templog1 = f_angleSpeedCtrl;
+//	templog1 = f_angleSpeedCtrl;
 //	templog1 = f_distSenCtrl;
 	
 	/* 直進制御 */
@@ -3017,7 +3021,7 @@ PUBLIC void MOT_turn( enMOT_TURN_CMD en_type )
 	FLOAT		f_angle3;	//第3移動角度[rad]
 	FLOAT		us_trgtAngleS;	//目標角度[rad/s]
 	
-	us_trgtAngleS = 300;
+	us_trgtAngleS = 500;
 	
 	/* ---------------- */
 	/*  動作データ計算  */

@@ -361,6 +361,7 @@ void Excep_TPU7_TGI7B(void){ }
 // MTU1 TGIA1
 void Excep_MTU1_TGIA1(void){ 
 	BAT_Pol();
+	log_interrupt();
 }
 
 // MTU1 TGIB1

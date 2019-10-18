@@ -55,7 +55,7 @@
   </DeviceOptionTab>
   <ConnectOptionTab>
     <Tool>COMMTYPE_COMPORT</Tool>
-    <ToolNum>COM9</ToolNum>
+    <ToolNum>COM11</ToolNum>
     <ToolPower>0</ToolPower>
     <ToolConnectMode>RFPSet</ToolConnectMode>
     <ToolConnectPinOut>0</ToolConnectPinOut>

@@ -274,7 +274,8 @@ PRIVATE void MODE_exe0( void )
 
 		case MODE_1:
 			LED = LED_ALL_ON;
-//			CTRL_clrData();
+			CTRL_clrData();
+			GYRO_SetRef();
 			while(1){
 				printf("   [ジャイロ角度]%5.2f [SPIジャイロ]%x \r", 
 					GYRO_getNowAngle(),recv_spi_gyro()
@@ -307,10 +308,8 @@ PRIVATE void MODE_exe0( void )
 
 		case MODE_4:
 			LED = LED_ALL_ON;
-			CTRL_clrData();
-			turntable();
-//			CTRL_sta();
 			while(1){
+				recv_spi_encoder();
 				ENC_print();
 				TIME_wait(50);
 			}
@@ -379,7 +378,7 @@ PRIVATE void MODE_exe0( void )
 PRIVATE void MODE_exe( void )
 {
 //	USHORT *read;
-//	enMAP_HEAD_DIR		en_endDir;
+	enMAP_HEAD_DIR		en_endDir;
 	GYRO_SetRef();
 	ENC_setref();
 	Failsafe_flag_off();
@@ -414,10 +413,10 @@ PRIVATE void MODE_exe( void )
 	//		CTRL_sta();
 			DCM_staMot(DCM_R);
 			DCM_staMot(DCM_L);
-			DCM_setDirCcw(DCM_R);
-			DCM_setDirCcw(DCM_L);
-			DCM_setPwmDuty(DCM_R,200);
-			DCM_setPwmDuty(DCM_L,200);
+			DCM_setDirCw(DCM_R);
+			DCM_setDirCw(DCM_L);
+			DCM_setPwmDuty(DCM_R,700);//*FF_BALANCE_R);
+			DCM_setPwmDuty(DCM_L,700);//*FF_BALANCE_L);
 			TIME_wait(1000);
 			DCM_brakeMot(DCM_R);
 			DCM_brakeMot(DCM_L);
@@ -426,27 +425,96 @@ PRIVATE void MODE_exe( void )
 			
 		case MODE_2:
 			LED = LED_ALL_ON;
-			MOT_goBlock_FinSpeed( 1.0, 0 );
+			MOT_setTrgtSpeed(SEARCH_SPEED);
+			MOT_setSuraStaSpeed( (FLOAT)SEARCH_SPEED );							// スラローム開始速度設定
+			PARAM_setSpeedType( PARAM_ST,   PARAM_SLOW );							// [直進] 速度普通
+			PARAM_setSpeedType( PARAM_TRUN, PARAM_SLOW );							// [旋回] 速度普通
+			PARAM_setSpeedType( PARAM_SLA,  PARAM_SLOW );							// [スラ] 速度普通
+			LED = LED_ALL_OFF;
+			TIME_wait(1000);
+			log_flag_on();
+			MOT_goBlock_FinSpeed( 5.0, 0 );
+			log_flag_off();
 			break;
 
 		case MODE_3:	
 			LED = LED_ALL_ON;
-			
+			log_read2();
 			break;
 
 		case MODE_4:
 			LED = LED_ALL_ON;
-			
+			MOT_setTrgtSpeed(SEARCH_SPEED);
+			MOT_setSuraStaSpeed( (FLOAT)SEARCH_SPEED );							// スラローム開始速度設定
+			PARAM_setSpeedType( PARAM_ST,   PARAM_SLOW );							// [直進] 速度普通
+			PARAM_setSpeedType( PARAM_TRUN, PARAM_SLOW );							// [旋回] 速度普通
+			PARAM_setSpeedType( PARAM_SLA,  PARAM_SLOW );							// [スラ] 速度普通
+			LED = LED_ALL_OFF;
+			TIME_wait(100);
+			MAP_setPos( 0, 0, NORTH );							// スタート位置
+
+			log_flag_on();
+
+			MAP_searchGoal( GOAL_MAP_X, GOAL_MAP_Y, SEARCH, SEARCH_SURA );			// ゴール設定
+
+			log_flag_off();
+
+//			POS_stop();			// debug
+			if (( SW_ON == SW_INC_PIN )||(SYS_isOutOfCtrl() == TRUE)){}
+			else{
+			map_write();
+			}
+			/* 帰りのスラローム探索 */
+			TIME_wait(1000);
+			LED = LED_ALL_OFF;
+
+//			log_flag_on();
+
+			MAP_searchGoal( 0, 0, SEARCH, SEARCH_SURA );
+
+//			log_flag_off();
+
+			TIME_wait(1000);
+			if (( SW_ON == SW_INC_PIN )||(SYS_isOutOfCtrl() == TRUE)){}
+			else{
+			map_write();
+//			PARAM_setCntType( TRUE );								// 最短走行
+			MAP_setPos( 0, 0, NORTH );								// スタート位置
+			MAP_makeContourMap( GOAL_MAP_X, GOAL_MAP_Y, BEST_WAY );					// 等高線マップを作る
+			MAP_makeCmdList( 0, 0, NORTH, GOAL_MAP_X, GOAL_MAP_Y, &en_endDir );		// ドライブコマンド作成
+			MAP_makeSuraCmdList();													// スラロームコマンド作成
+			MAP_makeSkewCmdList();
+			}
 			break;
 
 		case MODE_5:
 			LED = LED_ALL_ON;
+			MOT_setTrgtSpeed(SEARCH_SPEED);
+			MOT_setSuraStaSpeed( (FLOAT)SEARCH_SPEED );							// スラローム開始速度設定
+			PARAM_setSpeedType( PARAM_ST,   PARAM_SLOW );							// [直進] 速度普通
+			PARAM_setSpeedType( PARAM_TRUN, PARAM_SLOW );							// [旋回] 速度普通
+			PARAM_setSpeedType( PARAM_SLA,  PARAM_SLOW );							// [スラ] 速度普通
+			LED = LED_ALL_OFF;
+			TIME_wait(100);
+			MOT_turn(MOT_R180);
 			
 			break;
 
 		case MODE_6:
 			LED = LED_ALL_ON;
-			
+			MOT_setTrgtSpeed(SEARCH_SPEED);
+			MOT_setSuraStaSpeed( (FLOAT)SEARCH_SPEED );							// スラローム開始速度設定
+			PARAM_setSpeedType( PARAM_ST,   PARAM_SLOW );							// [直進] 速度普通
+			PARAM_setSpeedType( PARAM_TRUN, PARAM_SLOW );							// [旋回] 速度普通
+			PARAM_setSpeedType( PARAM_SLA,  PARAM_SLOW );							// [スラ] 速度普通
+
+			PARAM_makeSra( (FLOAT)SEARCH_SPEED, 200.0f, 2500.0f, SLA_90 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ
+
+			LED = LED_ALL_OFF;
+			TIME_wait(100);
+			MOT_goBlock_FinSpeed( 1.0, 300 );
+			MOT_goSla(MOT_R90S,PARAM_getSra( SLA_90 ));
+			MOT_goBlock_FinSpeed( 1.0, 0 );
 			break;
 
 		case MODE_7:
@@ -537,8 +605,8 @@ void main(void)
 			TIME_wait(SW_CHATTERING_WAIT);			// SWが離されるまで待つ
 		printf("mode selecting\r\n");
 		}
-//		else if (( SW_ON == SW_EXE_PIN )||(TRUE == MODE_CheckExe())){
-		else if ( SW_ON == SW_EXE_PIN ){
+		else if (( SW_ON == SW_EXE_PIN )||(TRUE == MODE_CheckExe())){
+//		else if ( SW_ON == SW_EXE_PIN ){
 			MODE_exe();								// モード実行
 			TIME_wait(SW_CHATTERING_WAIT);			// SWが離されるまで待つ
 		}
