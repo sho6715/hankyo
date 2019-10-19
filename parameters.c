@@ -177,9 +177,9 @@ PRIVATE stSLA				st_Sla[SLA_TYPE_MAX];					// スラローム時の走行パラメータ
 		},
 		/* 低速(PARAM_SLOW) */
 		{	//	FFSA	FFS		FFAA	FFA		速度kp	速度ki	速度kd	位置kp	位置ki	角速度kp	角速度ki	角速度kd	角度kp	角度ki		壁kp	壁kd
-			{ 0.0,		0,		0.05,	0.3,	0.1,	0,		0,		0.1,	0,		3.0,		0.0,		0,			0,		0.1,			0,		0,	},	// PARAM_ACC_TRUN
-			{ 0,		0,		0.05,	0.3,	0.1,	0,		0,		0.1,	0,		3.0,		0.0,		0,			0,		0.1,			0,		0,	},	// PARAM_CONST_TRUN
-			{ 0,		0,		0.05,	0.3,	0.1,	0,		0,		0.1,	0,		3.0,		0.0,		0,			7,		1.0,			0,		0,	},	// PARAM_DEC_TRUN
+			{ 0.0,		0,		0.05,	0.3,	1.0,	0,		0,		1.5,	0,		3.0,		0.0,		0,			0,		0.1,			0,		0,	},	// PARAM_ACC_TRUN
+			{ 0,		0,		0.05,	0.3,	1.0,	0,		0,		1.5,	0,		3.0,		0.0,		0,			0,		0.1,			0,		0,	},	// PARAM_CONST_TRUN
+			{ 0,		0,		0.05,	0.3,	1.0,	0,		0,		1.5,	0,		3.0,		0.0,		0,			7,		2.0,			0,		0,	},	// PARAM_DEC_TRUN
 		},
 		/* 通常(PARAM_NORMAL) */
 		{	//	FFSA	FFS		FFAA	FFA		速度kp	速度ki	速度kd	位置kp	位置ki	角速度kp	角速度ki	角速度kd	角度kp	角度ki		壁kp	壁kd
