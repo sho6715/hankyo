@@ -43,7 +43,7 @@
 #define L_SIDE_REF					( 160 )						// 左横壁、基準値180
 #define R_FRONT_WALL					( 35 )						// 右前壁、壁検知値　区画の中央からずらして見たときの値（壁を見るための値）45
 #define L_FRONT_WALL					( 35 )					// 左前壁、壁検知値40
-#define R_SIDE_WALL					( 25 )						// 右横壁、壁検知値100
+#define R_SIDE_WALL					( 30 )						// 右横壁、壁検知値100
 #define L_SIDE_WALL					( 30 )					// 左横壁、壁検知値80
 #define R_FRONT_SKEW_ERR1				( 80 )//仮
 #define L_FRONT_SKEW_ERR1				( 70 )

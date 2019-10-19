@@ -46,7 +46,7 @@
 
 /* 調整パラメータ */
 #define VCC_MAX						( 4.2f )									// バッテリ最大電圧[V]、4.2[V]×1[セル]
-#define TIRE_R						( 12.6f )	//推定値								// タイヤ直径 [mm]
+#define TIRE_R						( 12.65f )	//推定値								// タイヤ直径 [mm]
 //#define GEAR_RATIO					( 36 / 9 )									// ギア比(スパー/ピニオン)
 #define ROTATE_PULSE				( 65536 )									// 1周の最大数値
 #define DIST_1STEP					( PI * TIRE_R / ROTATE_PULSE )				// 1パルスで進む距離 [mm]

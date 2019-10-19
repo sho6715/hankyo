@@ -451,6 +451,8 @@ PRIVATE void MODE_exe( void )
 			PARAM_setSpeedType( PARAM_SLA,  PARAM_SLOW );							// [スラ] 速度普通
 			LED = LED_ALL_OFF;
 			TIME_wait(100);
+			PARAM_makeSra( (FLOAT)SEARCH_SPEED, 200.0f, 2500.0f, SLA_90 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ
+
 			MAP_setPos( 0, 0, NORTH );							// スタート位置
 
 			log_flag_on();
