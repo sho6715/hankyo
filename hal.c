@@ -2158,7 +2158,7 @@ PUBLIC void CTRL_pol( void )
 	ENC_GetDiv( &l_CntR, &l_CntL );					// 移動量[カウント値]を取得
 	CTRL_refNow();									// 制御に使用する値を現在の状態に更新
 	CTRL_refTarget();								// 制御に使用する値を目標値に更新
-
+	
 	templog1 = l_CntR;
 	templog2 = l_CntL;
 
