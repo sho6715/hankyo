@@ -718,7 +718,7 @@ PUBLIC void GYRO_Pol( void )
 		
 		if( ( f_ErrChkAngle < -500 ) || ( 500 < f_ErrChkAngle )||(f_speed <-1000)||(1000<f_speed) ){
 			
-//			Failsafe_flag();
+			Failsafe_flag();
 //			printf("fail\n\r");
 		}
 	}
@@ -1079,10 +1079,10 @@ PUBLIC void DCM_setDirCw( enDCM_ID en_id )
 {
 	/* 回転方向設定 */
 	if( en_id == DCM_R ){			// 右
-		DCM_R_IN = OFF;				// BIN1
+		DCM_R_IN = ON;				// BIN1
 	}
 	else{							// 左
-		DCM_L_IN = ON;			// AIN1
+		DCM_L_IN = OFF;			// AIN1
 
 	}
 }
@@ -1101,10 +1101,10 @@ PUBLIC void DCM_setDirCcw( enDCM_ID en_id )
 {
 	/* 回転方向設定 */
 	if( en_id == DCM_R ){			// 右
-		DCM_R_IN = ON;			// BIN1
+		DCM_R_IN = OFF;			// BIN1
 	}
 	else{							// 左
-		DCM_L_IN = OFF;				// AIN1
+		DCM_L_IN = ON;				// AIN1
 	}
 }
 
@@ -3846,7 +3846,7 @@ PUBLIC void Failsafe_flag_off(void)
 // **************************    履    歴    *******************************
 // 		v1.0		2018.10.10		翔	新規
 // *************************************************************************/
-/*PUBLIC BOOL SYS_isOutOfCtrl( void )
+PUBLIC BOOL SYS_isOutOfCtrl( void )
 {
 	if( bl_failsafe == TRUE ){
 		return TRUE;
@@ -3855,7 +3855,7 @@ PUBLIC void Failsafe_flag_off(void)
 		return FALSE;
 	}
 }
-*/
+
 
 // *************************************************************************
 //   機能		： ログ取り関数(真)
@@ -3910,20 +3910,20 @@ PUBLIC void log_interrupt ( void )
 		templog1,templog2);
 */
 
-	log_in2(f_NowSpeed, f_TrgtSpeed,
+/*	log_in2(f_NowSpeed, f_TrgtSpeed,
 		f_NowDist, f_TrgtDist,
 		GYRO_getSpeedErr(), f_TrgtAngleS,
 		f_NowAngle,f_TrgtAngle,
 		f_AccAngleS,templog1,
 		templog2,f_Duty_R);
-
-/*	log_in2(DIST_getNowVal( DIST_SEN_R_FRONT ), DIST_getNowVal( DIST_SEN_L_FRONT ),
+*/
+	log_in2(DIST_getNowVal( DIST_SEN_R_FRONT ), DIST_getNowVal( DIST_SEN_L_FRONT ),
 		DIST_getNowVal( DIST_SEN_R_SIDE ), DIST_getNowVal( DIST_SEN_L_SIDE ),
 		GYRO_getSpeedErr(), f_TrgtAngleS,
 		f_NowAngle,f_TrgtAngle,
 		templog2,templog1,
 		f_Duty_L,f_Duty_R);
-*/
+
 }
 
 // *************************************************************************

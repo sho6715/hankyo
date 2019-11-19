@@ -55,7 +55,7 @@ PRIVATE BOOL			bl_isOutOfCtrl		= FALSE;	// マウスがの制御不能（TRUE：制御不能、F
 // **************************    履    歴    *******************************
 // 		v1.0		2018.09.11			sato		新規
 // *************************************************************************/
-PUBLIC BOOL SYS_isOutOfCtrl( void )
+/*PUBLIC BOOL SYS_isOutOfCtrl( void )
 {
 	if( bl_isOutOfCtrl == TRUE ){
 		bl_isOutOfCtrl = FALSE;			// 初期化
@@ -65,7 +65,7 @@ PUBLIC BOOL SYS_isOutOfCtrl( void )
 		return FALSE;
 	}
 }
-
+*?
 // *************************************************************************
 //   機能		： 制御不能に陥ったことを設定する
 //   注意		： なし

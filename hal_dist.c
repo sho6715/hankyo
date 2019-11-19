@@ -41,10 +41,10 @@
 #define L_FRONT_REF					( 760 )					// 左前壁、基準値210
 #define R_SIDE_REF					( 160 )						// 右横壁、基準値230
 #define L_SIDE_REF					( 160 )						// 左横壁、基準値180
-#define R_FRONT_WALL					( 35 )						// 右前壁、壁検知値　区画の中央からずらして見たときの値（壁を見るための値）45
-#define L_FRONT_WALL					( 35 )					// 左前壁、壁検知値40
-#define R_SIDE_WALL					( 30 )						// 右横壁、壁検知値100
-#define L_SIDE_WALL					( 30 )					// 左横壁、壁検知値80
+#define R_FRONT_WALL					( 15 )						// 右前壁、壁検知値　区画の中央からずらして見たときの値（壁を見るための値）45
+#define L_FRONT_WALL					( 11 )					// 左前壁、壁検知値40
+#define R_SIDE_WALL					( 35 )						// 右横壁、壁検知値100
+#define L_SIDE_WALL					( 13 )					// 左横壁、壁検知値80
 #define R_FRONT_SKEW_ERR1				( 80 )//仮
 #define L_FRONT_SKEW_ERR1				( 70 )
 #define R_FRONT_SKEW_ERR2				( 192 )

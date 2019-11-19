@@ -41,7 +41,7 @@
 //**************************************************
 // プロトタイプ宣言（ファイル内で必要なものだけ記述）
 //**************************************************
-PUBLIC BOOL SYS_isOutOfCtrl( void );
+//PUBLIC BOOL SYS_isOutOfCtrl( void );
 PUBLIC void SYS_setOutOfCtrl( void );
 
 #endif	// _SYSTEM_H

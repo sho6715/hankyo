@@ -397,8 +397,8 @@ PRIVATE void MODE_exe( void )
 					TIME_wait(SW_CHATTERING_WAIT);			// SWが離されるまで待つ
 					printf("mode selecting_0\r\n");
 				}
-//				else if (( SW_ON == SW_EXE_PIN )||(TRUE == MODE_CheckExe())){
-				else if ( SW_ON == SW_EXE_PIN ){
+				else if (( SW_ON == SW_EXE_PIN )||(TRUE == MODE_CheckExe())){
+//				else if ( SW_ON == SW_EXE_PIN ){
 					MODE_exe0();								// モード実行
 					TIME_wait(SW_CHATTERING_WAIT);			// SWが離されるまで待つ
 					if (en_Mode == MODE_15)break;
@@ -415,8 +415,8 @@ PRIVATE void MODE_exe( void )
 			DCM_staMot(DCM_L);
 			DCM_setDirCw(DCM_R);
 			DCM_setDirCw(DCM_L);
-			DCM_setPwmDuty(DCM_R,700);//*FF_BALANCE_R);
-			DCM_setPwmDuty(DCM_L,700);//*FF_BALANCE_L);
+			DCM_setPwmDuty(DCM_R,200);//*FF_BALANCE_R);
+			DCM_setPwmDuty(DCM_L,200);//*FF_BALANCE_L);
 			TIME_wait(1000);
 			DCM_brakeMot(DCM_R);
 			DCM_brakeMot(DCM_L);
@@ -498,8 +498,8 @@ PRIVATE void MODE_exe( void )
 			PARAM_setSpeedType( PARAM_SLA,  PARAM_SLOW );							// [スラ] 速度普通
 			LED = LED_ALL_OFF;
 			TIME_wait(100);
-			MOT_turn(MOT_R180);
-			
+//			MOT_turn(MOT_R180);
+			log_read2();
 			break;
 
 		case MODE_6:

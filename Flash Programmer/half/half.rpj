@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <RfpProject>
   <FileVersion>V1.04.00</FileVersion>
-  <ProductVersion>V3.05.01</ProductVersion>
+  <ProductVersion>V3.05.00</ProductVersion>
   <ParameterFile>RX600 Series.fcf</ParameterFile>
   <Device>RX630</Device>
   <OperationTab>
     <Endian>RFLG_ENDIAN_LITTLE</Endian>
-    <ProgramFile>C:\Users\hosei\Desktop\half\half\DefaultBuild\halfmouse.mot</ProgramFile>
+    <ProgramFile>C:\mouse\hankyo\hankyo\DefaultBuild\halfmouse.mot</ProgramFile>
   </OperationTab>
   <OperationSettingTab>
     <FillCode>False</FillCode>
@@ -55,7 +55,7 @@
   </DeviceOptionTab>
   <ConnectOptionTab>
     <Tool>COMMTYPE_COMPORT</Tool>
-    <ToolNum>COM11</ToolNum>
+    <ToolNum>COM3</ToolNum>
     <ToolPower>0</ToolPower>
     <ToolConnectMode>RFPSet</ToolConnectMode>
     <ToolConnectPinOut>0</ToolConnectPinOut>
