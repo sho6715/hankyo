@@ -46,7 +46,7 @@
 
 /* 調整パラメータ */
 #define VCC_MAX						( 4.2f )									// バッテリ最大電圧[V]、4.2[V]×1[セル]
-#define TIRE_R						( 12.65f )	//推定値								// タイヤ直径 [mm]
+#define TIRE_R						( 12.35f )	//推定値								// タイヤ直径 [mm]
 //#define GEAR_RATIO					( 36 / 9 )									// ギア比(スパー/ピニオン)
 #define ROTATE_PULSE				( 65536 )									// 1周の最大数値
 #define DIST_1STEP					( PI * TIRE_R / ROTATE_PULSE )				// 1パルスで進む距離 [mm]
@@ -3910,20 +3910,20 @@ PUBLIC void log_interrupt ( void )
 		templog1,templog2);
 */
 
-/*	log_in2(f_NowSpeed, f_TrgtSpeed,
+	log_in2(f_NowSpeed, f_TrgtSpeed,
 		f_NowDist, f_TrgtDist,
 		GYRO_getSpeedErr(), f_TrgtAngleS,
 		f_NowAngle,f_TrgtAngle,
 		f_AccAngleS,templog1,
 		templog2,f_Duty_R);
-*/
-	log_in2(DIST_getNowVal( DIST_SEN_R_FRONT ), DIST_getNowVal( DIST_SEN_L_FRONT ),
+
+/*	log_in2(DIST_getNowVal( DIST_SEN_R_FRONT ), DIST_getNowVal( DIST_SEN_L_FRONT ),
 		DIST_getNowVal( DIST_SEN_R_SIDE ), DIST_getNowVal( DIST_SEN_L_SIDE ),
 		GYRO_getSpeedErr(), f_TrgtAngleS,
 		f_NowAngle,f_TrgtAngle,
 		templog2,templog1,
 		f_Duty_L,f_Duty_R);
-
+*/
 }
 
 // *************************************************************************

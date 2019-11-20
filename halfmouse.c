@@ -415,8 +415,8 @@ PRIVATE void MODE_exe( void )
 			DCM_staMot(DCM_L);
 			DCM_setDirCw(DCM_R);
 			DCM_setDirCw(DCM_L);
-			DCM_setPwmDuty(DCM_R,200);//*FF_BALANCE_R);
-			DCM_setPwmDuty(DCM_L,200);//*FF_BALANCE_L);
+			DCM_setPwmDuty(DCM_R,100);//*FF_BALANCE_R);
+			DCM_setPwmDuty(DCM_L,100);//*FF_BALANCE_L);
 			TIME_wait(1000);
 			DCM_brakeMot(DCM_R);
 			DCM_brakeMot(DCM_L);
@@ -514,19 +514,32 @@ PRIVATE void MODE_exe( void )
 
 			LED = LED_ALL_OFF;
 			TIME_wait(100);
+			log_flag_on();
 			MOT_goBlock_FinSpeed( 1.0, 300 );
 			MOT_goSla(MOT_R90S,PARAM_getSra( SLA_90 ));
 			MOT_goBlock_FinSpeed( 1.0, 0 );
+			log_flag_off();
 			break;
 
 		case MODE_7:
 			LED = LED_ALL_ON;
+			MOT_setTrgtSpeed(SEARCH_SPEED);
+			LED = LED_ALL_OFF;
+			TIME_wait(100);
+			log_flag_on();
+			MOT_goBlock_FinSpeed( 7.0, 0 );
+			log_flag_off();
 			
 			break;
 
 		case MODE_8:
 			LED = LED_ALL_ON;
-			
+			MOT_setTrgtSpeed(SEARCH_SPEED);
+			LED = LED_ALL_OFF;
+			TIME_wait(100);
+			log_flag_on();
+			MOT_turn(MOT_R90);
+			log_flag_off();
 			break;
 			
 		case MODE_9:
@@ -700,7 +713,7 @@ PRIVATE void SYS_start( void )
 	printf(" ┗━━━━━━━━━━━━━━━━━━━━━┛\r\n");
 
 	PARAM_makeSra( (FLOAT)SEARCH_SPEED, 100.0f, 2500.0f, SLA_45 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ200 2000	T	200 2000
-	PARAM_makeSra( (FLOAT)SEARCH_SPEED, 100.0f, 4000.0f, SLA_90 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ300 3500		200 4000
+	PARAM_makeSra( (FLOAT)SEARCH_SPEED, 200.0f, 2500.0f, SLA_90 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ
 	PARAM_makeSra( (FLOAT)SEARCH_SPEED, 150.0f, 6000.0f, SLA_135 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ300 4500		300 4000
 	PARAM_makeSra( (FLOAT)SEARCH_SPEED, 200.0f, 7000.0f, SLA_N90 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ500 5000		500 5000
 
