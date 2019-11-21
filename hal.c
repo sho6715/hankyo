@@ -46,7 +46,7 @@
 
 /* 調整パラメータ */
 #define VCC_MAX						( 4.2f )									// バッテリ最大電圧[V]、4.2[V]×1[セル]
-#define TIRE_R						( 12.35f )	//推定値								// タイヤ直径 [mm]
+#define TIRE_R						( 12.65f )	//推定値								// タイヤ直径 [mm]
 //#define GEAR_RATIO					( 36 / 9 )									// ギア比(スパー/ピニオン)
 #define ROTATE_PULSE				( 65536 )									// 1周の最大数値
 #define DIST_1STEP					( PI * TIRE_R / ROTATE_PULSE )				// 1パルスで進む距離 [mm]
@@ -65,7 +65,7 @@
 #define ANGLE_OFFSET2				( 0 )						// 角度のオフセット値（バッファリングによる誤差を埋めるための値）
 #define ANGLE_OFFSET3				( 0 )					// 角度のオフセット値（バッファリングによる誤差を埋めるための値）
 
-#define log_num			(1000)					//ログ取得数（変更時はこちらを変更）
+#define log_num			(200)					//ログ取得数（変更時はこちらを変更）
 
 //**************************************************
 // 列挙体（enum）
@@ -1879,8 +1879,26 @@ PUBLIC void CTRL_getDistFB( FLOAT* p_err )
 
 /* 超信地旋回 */
 	else if( ( en_Type == CTRL_ACC_TRUN ) || ( en_Type == CTRL_CONST_TRUN ) || ( en_Type == CTRL_DEC_TRUN ) ){
+		f_kp = PARAM_getGain( Chg_ParamID(en_Type) )->f_FB_dist_kp;
+		f_ki = PARAM_getGain( Chg_ParamID(en_Type) )->f_FB_dist_ki;
+		
+		/* 位置制御 */
 		f_distErr  = f_TrgtDist - f_NowDist;					// 距離偏差[mm]
-		*p_err = f_distErr * 0.1;								// P制御量算出
+
+		/* I成分演算 */
+		f_DistErrSum += f_distErr * f_ki;			// I成分更新
+		if( f_DistErrSum > 100 ){
+			f_DistErrSum = 100;			// 上限リミッター
+		}
+		
+		/* PI制御 */
+		*p_err = f_distErr * f_kp + f_DistErrSum;				// PI制御量算出
+		
+		/* 累積偏差クリア */
+		if( FABS( f_TrgtDist - f_NowDist ) < 0.05 ){
+			f_DistErrSum = 0;
+		}
+	
 	}
 
 }
@@ -1992,11 +2010,11 @@ PUBLIC void CTRL_getAngleFB( FLOAT* p_err )
 		f_ki = PARAM_getGain( Chg_ParamID(en_Type) )->f_FB_angle_ki;
 		
 		f_AngleErrSum += f_err*f_ki;	//I成分更新
-		if(f_AngleErrSum > 200){
-			f_AngleErrSum = 200;			//上限リミッター
+		if(f_AngleErrSum > 500){
+			f_AngleErrSum = 500;			//上限リミッター
 		}
-		else if(f_AngleErrSum <-200){
-			f_AngleErrSum = -200;
+		else if(f_AngleErrSum <-500){
+			f_AngleErrSum = -500;
 		}
 		
 		//*p_err = f_err * FB_ANG_KP_GAIN;					// P制御量算出
@@ -2004,7 +2022,7 @@ PUBLIC void CTRL_getAngleFB( FLOAT* p_err )
 //		templog2 = f_AngleErrSum;
 
 		/* 累積偏差クリア */
-		if( FABS( f_TrgtAngle - f_NowAngle ) < 0.3 ){
+		if( FABS( f_TrgtAngle - f_NowAngle ) < 0.1 ){
 			f_AngleErrSum = 0;
 		}
 	}

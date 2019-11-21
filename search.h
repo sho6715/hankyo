@@ -25,11 +25,11 @@
 /* 迷路サイズ */
 #define GOAL_MAP_X_def					( 6 )				// ゴールのX区画数（横方向） [区画]
 #define GOAL_MAP_Y_def					( 9 )				// ゴールのY区画数（縦方向） [区画]
-#define MAP_X_SIZE					( 16 )				// 迷路のX区画数（横方向） [区画]
-#define MAP_Y_SIZE					( 16 )				// 迷路のY区画数（縦方向） [区画]
+#define MAP_X_SIZE					( 32 )				// 迷路のX区画数（横方向） [区画]
+#define MAP_Y_SIZE					( 32 )				// 迷路のY区画数（縦方向） [区画]
 
-#define MAP_X_SIZE_REAL				( 16 )					// 迷路の実X区画数（横方向） [区画]
-#define MAP_Y_SIZE_REAL				( 16 )					// 迷路の実Y区画数（縦方向） [区画]
+#define MAP_X_SIZE_REAL				( 32 )					// 迷路の実X区画数（横方向） [区画]
+#define MAP_Y_SIZE_REAL				( 32 )					// 迷路の実Y区画数（縦方向） [区画]
 
 //**************************************************
 // 列挙体（enum）

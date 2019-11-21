@@ -524,6 +524,9 @@ PRIVATE void MODE_exe( void )
 		case MODE_7:
 			LED = LED_ALL_ON;
 			MOT_setTrgtSpeed(SEARCH_SPEED);
+			PARAM_setSpeedType( PARAM_ST,   PARAM_SLOW );							// [直進] 速度普通
+			PARAM_setSpeedType( PARAM_TRUN, PARAM_SLOW );							// [旋回] 速度普通
+			PARAM_setSpeedType( PARAM_SLA,  PARAM_SLOW );							// [スラ] 速度普通
 			LED = LED_ALL_OFF;
 			TIME_wait(100);
 			log_flag_on();
@@ -535,6 +538,9 @@ PRIVATE void MODE_exe( void )
 		case MODE_8:
 			LED = LED_ALL_ON;
 			MOT_setTrgtSpeed(SEARCH_SPEED);
+			PARAM_setSpeedType( PARAM_ST,   PARAM_SLOW );							// [直進] 速度普通
+			PARAM_setSpeedType( PARAM_TRUN, PARAM_SLOW );							// [旋回] 速度普通
+			PARAM_setSpeedType( PARAM_SLA,  PARAM_SLOW );							// [スラ] 速度普通
 			LED = LED_ALL_OFF;
 			TIME_wait(100);
 			log_flag_on();
@@ -544,6 +550,19 @@ PRIVATE void MODE_exe( void )
 			
 		case MODE_9:
 			LED = LED_ALL_ON;
+			MOT_setTrgtSpeed(SEARCH_SPEED);
+			PARAM_setSpeedType( PARAM_ST,   PARAM_SLOW );							// [直進] 速度普通
+			PARAM_setSpeedType( PARAM_TRUN, PARAM_SLOW );							// [旋回] 速度普通
+			PARAM_setSpeedType( PARAM_SLA,  PARAM_SLOW );							// [スラ] 速度普通
+			LED = LED_ALL_OFF;
+			TIME_wait(100);
+			MOT_goBlock_FinSpeed( 6.5, 300 );
+			MOT_goSla(MOT_R90S,PARAM_getSra( SLA_90 ));
+			MOT_goBlock_FinSpeed( 2.0, 300 );
+			MOT_goSla(MOT_R90S,PARAM_getSra( SLA_90 ));
+			MOT_goBlock_FinSpeed( 1.0, 300 );
+			MOT_goSla(MOT_L90S,PARAM_getSra( SLA_90 ));
+
 			
 			break;
 			

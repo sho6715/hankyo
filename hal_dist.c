@@ -41,8 +41,8 @@
 #define L_FRONT_REF					( 1030 )					// 左前壁、基準値210
 #define R_SIDE_REF					( 670 )						// 右横壁、基準値230
 #define L_SIDE_REF					( 600 )						// 左横壁、基準値180
-#define R_FRONT_WALL					( 90 )						// 右前壁、壁検知値　区画の中央からずらして見たときの値（壁を見るための値）45
-#define L_FRONT_WALL					( 60 )					// 左前壁、壁検知値40
+#define R_FRONT_WALL					( 70 )						// 右前壁、壁検知値　区画の中央からずらして見たときの値（壁を見るための値）45
+#define L_FRONT_WALL					( 40 )					// 左前壁、壁検知値40
 #define R_SIDE_WALL					( 160 )						// 右横壁、壁検知値100
 #define L_SIDE_WALL					( 150 )					// 左横壁、壁検知値80
 #define R_FRONT_SKEW_ERR1				( 80 )//仮
@@ -51,10 +51,10 @@
 #define L_FRONT_SKEW_ERR2				( 160 )
 #define R_FRONT_SKEW_ERR3				( 250 )
 #define L_FRONT_SKEW_ERR3				( 250 )
-#define R_FRONT_CTRL					( 370 )
-#define L_FRONT_CTRL					( 300 )
-#define R_FRONT_NOCTRL					( 530 )
-#define L_FRONT_NOCTRL					( 450 )
+#define R_FRONT_CTRL					( 900 )
+#define L_FRONT_CTRL					( 870 )
+#define R_FRONT_NOCTRL					( 1200 )
+#define L_FRONT_NOCTRL					( 1170 )
 
 
 #define		SEN_WAIT_CNT		(500)		//センサの発光安定待ち(実験値)
