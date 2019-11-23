@@ -31,6 +31,8 @@
 #define MAP_X_SIZE_REAL				( 32 )					// 迷路の実X区画数（横方向） [区画]
 #define MAP_Y_SIZE_REAL				( 32 )					// 迷路の実Y区画数（縦方向） [区画]
 
+#define Goalsize					(9)
+
 //**************************************************
 // 列挙体（enum）
 //**************************************************
@@ -44,6 +46,7 @@ typedef enum{
 typedef enum{
 	SEARCH =0,			// 探索
 	BEST_WAY,			// 最短
+	SEARCH_RETURN,
 	MAP_ACT_MODE_MAX,
 }enMAP_ACT_MODE;
 
@@ -96,6 +99,6 @@ PUBLIC void MAP_actGoalLED( void );
 
 PUBLIC void MAP_ClearMapData( void );
 
-
+PUBLIC void MAP_Goalsize(int size);
 
 #endif //_SEARCH_H

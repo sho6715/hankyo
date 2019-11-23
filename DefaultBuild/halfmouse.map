@@ -1,4 +1,4 @@
-Renesas Optimizing Linker (W2.08.00 )             21-Nov-2019 19:37:24
+Renesas Optimizing Linker (W2.08.00 )             23-Nov-2019 16:59:39
 
 *** Options ***
 
@@ -36,21 +36,21 @@ Renesas Optimizing Linker (W2.08.00 )             21-Nov-2019 19:37:24
 
 SECTION                            START      END         SIZE   ALIGN
 B_1
-                                  00000004  00003432      342f   1
+                                  00000004  00003435      3432   1
 R_1
-                                  00003433  00003489        57   1
+                                  00003436  0000348e        59   1
 B_2
-                                  0000348a  00003cdf       856   2
+                                  00003490  00003ce5       856   2
 R_2
-                                  00003ce0  00003cff        20   2
+                                  00003ce6  00003d05        20   2
 B
-                                  00003d00  000067f3      2af4   4
+                                  00003d08  000067fb      2af4   4
 R
-                                  000067f4  00006b43       350   4
+                                  000067fc  00006b4b       350   4
 SU
-                                  00006b44  00006c43       100   4
+                                  00006b4c  00006c4b       100   4
 SI
-                                  00006c44  00006f43       300   4
+                                  00006c4c  00006f4b       300   4
 PResetPRG
                                   fff80000  fff80034        35   1
 C_1
@@ -70,23 +70,23 @@ C$VTBL
 C$VECT
                                   fff81f38  fff82337       400   4
 D_1
-                                  fff82338  fff8238e        57   1
+                                  fff82338  fff82390        59   1
 D_2
-                                  fff82390  fff823af        20   2
+                                  fff82392  fff823b1        20   2
 D
-                                  fff823b0  fff826ff       350   4
+                                  fff823b4  fff82703       350   4
 P
-                                  fff82700  fff89d1f      7620   1
+                                  fff82704  fff8a2ba      7bb7   1
 PIntPRG
-                                  fff89d20  fff89ee1       1c2   1
+                                  fff8a2bb  fff8a47c       1c2   1
 W_1
-                                  fff89ee2  fff89f1e        3d   1
+                                  fff8a47d  fff8a4b9        3d   1
 W_2
-                                  fff89f20  fff89f7d        5e   2
+                                  fff8a4ba  fff8a517        5e   2
 W
-                                  fff89f80  fff89f80         0   4
+                                  fff8a518  fff8a518         0   4
 L
-                                  fff89f80  fff8a478       4f9   4
+                                  fff8a518  fff8aa48       531   4
 $ADDR_C_FFFFFF80
                                   ffffff80  ffffff83         4   1
 $ADDR_C_FFFFFFA0

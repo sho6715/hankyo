@@ -22,6 +22,7 @@
 #include <init.h>
 #include <hal_dist.h>
 #include <DataFlash.h>
+#include <map_cmd.h>
 
 //**************************************************
 // 定義（define）
@@ -29,7 +30,7 @@
 #define MAP_SMAP_MAX_VAL	( MAP_X_SIZE * MAP_Y_SIZE ) 			///< 等高線mapの最大値
 #define MAP_SMAP_MAX_PRI_VAL	( MAP_SMAP_MAX_VAL * 4 )				///< 等高線mapの優先度最大値
 
-#define MOVE_BACK_DIST		(0.0f)
+#define MOVE_BACK_DIST		(0.24f)
 
 //**************************************************
 // 列挙体（enum）
@@ -56,6 +57,11 @@ PRIVATE UCHAR		uc_back[ MAP_Y_SIZE ][ MAP_X_SIZE ];			// 迷路データ
 
 PUBLIC UCHAR		GOAL_MAP_X;					//ゴール座標変更プログラム用ｘ
 PUBLIC UCHAR		GOAL_MAP_Y;					//ゴール座標変更プログラム用ｙ
+
+PUBLIC UCHAR		GOAL_SIZE;
+//等高線マップを更新を止めるための移動区画規定変数
+PRIVATE UCHAR		uc_max_x = GOAL_MAP_X_def;
+PRIVATE UCHAR		uc_max_y = GOAL_MAP_Y_def;
 
 //**************************************************
 // プロトタイプ宣言（ファイル内で必要なものだけ記述）
@@ -294,6 +300,39 @@ PUBLIC void MAP_showLog( void )
 }
 
 // *************************************************************************
+//   機能		： 等高線マップを表示する
+//   注意		： なし
+//   メモ		： なし
+//   引数		： なし
+//   返り値		： なし
+// **************************    履    歴    *******************************
+// 		v1.0		2019.11.13			sato		新規
+// *************************************************************************/
+PUBLIC void MAP_showcountLog(void)
+{
+	SHORT	x, y;
+	CHAR	c_data;
+
+	/* ---------- */
+	/*  等高線迷路  */
+	/* ---------- */
+	printf("\n\r  /* ------------ */   ");
+	printf("\n\r  /*  等高線迷路  */   ");
+	printf("\n\r  /* ------------ */   ");
+
+	printf("\n\r");
+	for (y = MAP_Y_SIZE - 1; y > -1; y--) {
+		for (x = 0; x < MAP_X_SIZE; x++) {
+			c_data = (USHORT)us_cmap[y][x];
+			printf("%3d ", c_data);
+		}
+		printf("\n\r");
+	}
+
+
+}
+
+// *************************************************************************
 //   機能		： 迷路データをクリアする
 //   注意		： なし
 //   メモ		： なし
@@ -418,6 +457,7 @@ PRIVATE void MAP_makeMapData( void )
 //   返り値		： なし
 // **************************    履    歴    *******************************
 // 		v1.0		2018.09.27			sato		新規
+//		v2.0		2019.11.21			sato		処理軽減プログラム追加
 // *************************************************************************/
 PUBLIC void  MAP_makeContourMap( 
 	UCHAR uc_goalX, 			///< [in] ゴールX座標
@@ -438,6 +478,24 @@ PUBLIC void  MAP_makeContourMap(
 	}
 	/* 目標地点の等高線を0に設定 */
 	us_cmap[uc_goalY][uc_goalX] = 0;
+	if (GOAL_SIZE == 4) {
+		us_cmap[uc_goalY + 1][uc_goalX] = 0;
+		us_cmap[uc_goalY][uc_goalX + 1] = 0;
+		us_cmap[uc_goalY + 1][uc_goalX + 1] = 0;
+	}
+	else if (GOAL_SIZE == 9){
+		us_cmap[uc_goalY+1][uc_goalX] = 0;
+		us_cmap[uc_goalY][uc_goalX+1] = 0;
+		us_cmap[uc_goalY+1][uc_goalX+1] = 0;
+		us_cmap[uc_goalY+2][uc_goalX] = 0;
+		us_cmap[uc_goalY+2][uc_goalX+1] = 0;
+		us_cmap[uc_goalY][uc_goalX+2] = 0;
+		us_cmap[uc_goalY+1][uc_goalX+2] = 0;
+		us_cmap[uc_goalY+2][uc_goalX+2] = 0;
+	}
+
+	if (mx > uc_max_x)uc_max_x = mx;
+	if (my > uc_max_y)uc_max_y = my;
 
 	/* 等高線マップを作成 */
 	uc_dase = 0;
@@ -445,10 +503,11 @@ PUBLIC void  MAP_makeContourMap(
 		uc_level = 0;
 		uc_new = uc_dase + 1;
 		for ( y = 0; y < MAP_Y_SIZE; y++ ){
+			if (uc_max_y+1 < y) break;
 			for ( x = 0; x < MAP_X_SIZE; x++ ){
+				if (uc_max_x+1 < x) break;
 				if ( us_cmap[y][x] == uc_dase ){
 					uc_wallData = g_sysMap[y][x];
-					
 					/* 探索走行 */
 					if( SEARCH == en_type ){
 						if ( ( ( uc_wallData & 0x01 ) == 0x00 ) && ( y != (MAP_Y_SIZE-1) ) ){
@@ -503,9 +562,12 @@ PUBLIC void  MAP_makeContourMap(
 							}
 						}
 					}
+					if ((x == mx)&&(y == my))break;
 				}
 			}
+			if ((x == mx)&&(y == my))break;
 		}
+		if ((x == mx)&&(y == my))break;
 		uc_dase = uc_dase + 1;
 	}
 	while( uc_level != 0 );
@@ -915,6 +977,107 @@ PUBLIC void MAP_actGoalLED( void )
 }
 
 // *************************************************************************
+//   機能		： ゴール座標サイズ変更
+//   注意		： なし
+//   メモ		： なし
+//   引数		： なし
+//   返り値		： なし
+// **************************    履    歴    *******************************
+// 		v1.0		2019.11.23			sato		新規
+// *************************************************************************/
+PUBLIC void MAP_Goalsize(int size)
+{
+	GOAL_SIZE= size;
+	if (size == 4) {
+		uc_max_x = uc_max_x + 1;
+		uc_max_y = uc_max_y + 1;
+	}
+	else if (size == 9) {
+		uc_max_x = uc_max_x + 2;
+		uc_max_y = uc_max_y + 2;
+	}
+}
+
+// *************************************************************************
+//   機能		： 帰還探索用等高線マップ作成
+//   注意		： なし
+//   メモ		： なし
+//   引数		： なし
+//   返り値		： なし
+// **************************    履    歴    *******************************
+// 		v1.0		2019.11.23			sato		新規
+// *************************************************************************/
+PUBLIC void  MAP_makeReturnContourMap() 
+{
+	USHORT		x, y, i;		// ループ変数
+	UCHAR		uc_dase;		// 基準値
+	UCHAR		uc_new;			// 新値
+	UCHAR		uc_level;		// 等高線
+	UCHAR		uc_wallData;	// 壁情報
+
+	/* 等高線マップを初期化する */
+	for (i = 0; i < MAP_SMAP_MAX_VAL; i++) {
+		us_cmap[i / MAP_Y_SIZE][i & (MAP_X_SIZE - 1)] = MAP_SMAP_MAX_VAL - 1;
+	}
+	/* 目標地点の等高線を0に設定 */
+	us_cmap[0][0] = 0;
+
+	/* 等高線マップを作成 */
+	uc_dase = 0;
+	do {
+		uc_level = 0;
+		uc_new = uc_dase + 1;
+		for (y = 0; y < MAP_Y_SIZE; y++) {
+			for (x = 0; x < MAP_X_SIZE; x++) {
+				if (us_cmap[y][x] == uc_dase) {
+					uc_wallData = g_sysMap[y][x];
+					/* 探索走行 */
+	
+						if (((uc_wallData & 0x01) == 0x00) && (y != (MAP_Y_SIZE - 1))) {
+							if (us_cmap[y + 1][x] == MAP_SMAP_MAX_VAL - 1) {
+								us_cmap[y + 1][x] = uc_new;
+								uc_level++;
+							}
+						}
+						if (((uc_wallData & 0x02) == 0x00) && (x != (MAP_X_SIZE - 1))) {
+							if (us_cmap[y][x + 1] == MAP_SMAP_MAX_VAL - 1) {
+								us_cmap[y][x + 1] = uc_new;
+								uc_level++;
+							}
+						}
+						if (((uc_wallData & 0x04) == 0x00) && (y != 0)) {
+							if (us_cmap[y - 1][x] == MAP_SMAP_MAX_VAL - 1) {
+								us_cmap[y - 1][x] = uc_new;
+								uc_level++;
+							}
+						}
+						if (((uc_wallData & 0x08) == 0x00) && (x != 0)) {
+							if (us_cmap[y][x - 1] == MAP_SMAP_MAX_VAL - 1) {
+								us_cmap[y][x - 1] = uc_new;
+								uc_level++;
+							}
+						}
+
+				}
+			}
+		}
+		uc_dase = uc_dase + 1;
+	} while (uc_level != 0);
+
+#if 0
+	/* debug */
+	for (x = 0; x < 4; x++) {
+
+		for (y = 0; y < 4; y++) {
+			us_Log[y][x][us_LogPt] = us_cmap[y][x];
+		}
+	}
+	us_LogPt++;
+#endif
+
+}
+
+// *************************************************************************
 //   機能		： ゴールの探索動作
 //   注意		： なし
 //   メモ		： なし
@@ -931,7 +1094,27 @@ PUBLIC void MAP_searchGoal(
 ){
 	enMAP_HEAD_DIR	en_head = NORTH;
 	BOOL		bl_type = TRUE;			// 現在位置、FALSE: １区間前進状態、TURE:半区間前進状態
+	enMAP_HEAD_DIR		en_endDir;
 	
+	UCHAR uc_goalX;
+	UCHAR uc_goalY;
+	UCHAR uc_staX;
+	UCHAR uc_staY;
+
+	if (en_search == SEARCH_RETURN){
+		uc_goalX = uc_trgX;
+		uc_goalY = uc_trgY;
+		uc_staX = mx;
+		uc_staY = my;
+//		printf("mx%d,my%d\n", mx, my);
+		MAP_makeContourMap(uc_trgX, uc_trgY, en_type);
+		MAP_searchCmdList(uc_staX, uc_staY, en_Head, uc_goalX, uc_goalX, &en_endDir);
+		uc_trgX = Return_X;
+		uc_trgY = Return_Y;
+//		printf("goalx%d,goaly%d\n", Return_X, Return_Y);
+//		MAP_showcountLog();
+	}
+
 //	SYS_setDisable( SYS_MODE );				// モード変更禁止
 
 	MOT_setTrgtSpeed(SEARCH_SPEED);		// 目標速度
@@ -986,6 +1169,35 @@ PUBLIC void MAP_searchGoal(
 				MAP_moveNextBlock_Sura(en_head, &bl_type, FALSE );	// 次の区画へ移動						← ここで改めてリリースチェック＋壁再度作成＋等高線＋超信地旋回動作
 			}
 		}
+		/* 帰還探索 */
+		else if (SEARCH_RETURN == en_search) {
+			
+			if( TRUE == bl_type ){
+				
+				MOT_goBlock_FinSpeed( 0.5 + f_MoveBackDist, SEARCH_SPEED );		// 半区画前進(バックの移動量を含む)
+			}
+			MAP_makeMapData();										// 壁データから迷路データを作成			← ここでデータ作成をミスっている
+			MAP_calcMouseDir(CONTOUR_SYSTEM, &en_head);				
+			
+			/* 次の区画へ移動 */
+			if ((us_cmap[my][mx] == 0)||((g_sysMap[uc_trgY][uc_trgX]&0xf0) == 0xf0)) {
+				if ((mx == 0)&&(my == 0)){
+					MAP_actGoal();
+					break;
+				}
+				MAP_moveNextBlock_Sura(en_head, &bl_type, FALSE);	// 次の区画へ移動
+//				MAP_makeContourMap(uc_goalX, uc_goalX, en_type);//自己座標で処理終了するため全体マップ作成不能20191121
+				MAP_makeReturnContourMap();
+				MAP_searchCmdList(uc_staX, uc_staY, en_Head, uc_goalX, uc_goalX, &en_endDir);
+				uc_trgX = Return_X;
+				uc_trgY = Return_Y;
+			}
+			else {
+				MAP_moveNextBlock_Sura(en_head, &bl_type, FALSE);	// 次の区画へ移動						← ここで改めてリリースチェック＋壁再度作成＋等高線＋超信地旋回動作
+
+			}
+		}
+
 		
 		/* 途中で制御不能になった */
 		if( SYS_isOutOfCtrl() == TRUE ){

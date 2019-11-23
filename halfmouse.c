@@ -437,9 +437,47 @@ PRIVATE void MODE_exe( void )
 			log_flag_off();
 			break;
 
-		case MODE_3:	
+		case MODE_3:
 			LED = LED_ALL_ON;
-			log_read2();
+			MOT_setTrgtSpeed(SEARCH_SPEED);
+			MOT_setSuraStaSpeed( (FLOAT)SEARCH_SPEED );							// スラローム開始速度設定
+			PARAM_setSpeedType( PARAM_ST,   PARAM_SLOW );							// [直進] 速度普通
+			PARAM_setSpeedType( PARAM_TRUN, PARAM_SLOW );							// [旋回] 速度普通
+			PARAM_setSpeedType( PARAM_SLA,  PARAM_SLOW );							// [スラ] 速度普通
+			LED = LED_ALL_OFF;
+			TIME_wait(100);
+			PARAM_makeSra( (FLOAT)SEARCH_SPEED, 200.0f, 2500.0f, SLA_90 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ
+			MAP_Goalsize(Goalsize);
+			MAP_setPos( 0, 0, NORTH );							// スタート位置
+
+			log_flag_on();
+
+			MAP_searchGoal( GOAL_MAP_X, GOAL_MAP_Y, SEARCH, SEARCH_SURA );			// ゴール設定
+
+			log_flag_off();
+
+//			POS_stop();			// debug
+			if (( SW_ON == SW_INC_PIN )||(SYS_isOutOfCtrl() == TRUE))break;
+			map_write();
+			/* 帰りのスラローム探索 */
+			TIME_wait(1000);
+			LED = LED_ALL_OFF;
+			MAP_Goalsize(1);
+//			log_flag_on();
+
+			MAP_searchGoal( 0, 0, SEARCH, SEARCH_SURA );
+
+//			log_flag_off();
+
+			TIME_wait(1000);
+			if (( SW_ON == SW_INC_PIN )||(SYS_isOutOfCtrl() == TRUE))break;
+			map_write();
+//			PARAM_setCntType( TRUE );								// 最短走行
+			MAP_setPos( 0, 0, NORTH );								// スタート位置
+			MAP_makeContourMap( GOAL_MAP_X, GOAL_MAP_Y, BEST_WAY );					// 等高線マップを作る
+			MAP_makeCmdList( 0, 0, NORTH, GOAL_MAP_X, GOAL_MAP_Y, &en_endDir );		// ドライブコマンド作成
+			MAP_makeSuraCmdList();													// スラロームコマンド作成
+			MAP_makeSkewCmdList();
 			break;
 
 		case MODE_4:
@@ -491,14 +529,6 @@ PRIVATE void MODE_exe( void )
 
 		case MODE_5:
 			LED = LED_ALL_ON;
-			MOT_setTrgtSpeed(SEARCH_SPEED);
-			MOT_setSuraStaSpeed( (FLOAT)SEARCH_SPEED );							// スラローム開始速度設定
-			PARAM_setSpeedType( PARAM_ST,   PARAM_SLOW );							// [直進] 速度普通
-			PARAM_setSpeedType( PARAM_TRUN, PARAM_SLOW );							// [旋回] 速度普通
-			PARAM_setSpeedType( PARAM_SLA,  PARAM_SLOW );							// [スラ] 速度普通
-			LED = LED_ALL_OFF;
-			TIME_wait(100);
-//			MOT_turn(MOT_R180);
 			log_read2();
 			break;
 
