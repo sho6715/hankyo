@@ -25,7 +25,7 @@
 //**************************************************
 // 定義（define）
 //**************************************************
-#define DIST_NO_WALL_DIV_FILTER				( 200 )						// 壁なしとする差分値
+#define DIST_NO_WALL_DIV_FILTER				( 300 )						// 壁なしとする差分値
 #define DIST_REF_UP					( 150 )						// 壁なしと判断する際に基準値に加算する値
 /*
 #define R_FRONT_REF					( 350 )					// 右前壁、基準値　区画の中央において壁を見た値275
@@ -40,11 +40,11 @@
 #define R_FRONT_REF					( 1060 )					// 右前壁、基準値　区画の中央において壁を見た値275
 #define L_FRONT_REF					( 1030 )					// 左前壁、基準値210
 #define R_SIDE_REF					( 670 )						// 右横壁、基準値230
-#define L_SIDE_REF					( 600 )						// 左横壁、基準値180
+#define L_SIDE_REF					( 670 )						// 左横壁、基準値180
 #define R_FRONT_WALL					( 70 )						// 右前壁、壁検知値　区画の中央からずらして見たときの値（壁を見るための値）45
 #define L_FRONT_WALL					( 40 )					// 左前壁、壁検知値40
-#define R_SIDE_WALL					( 160 )						// 右横壁、壁検知値100
-#define L_SIDE_WALL					( 150 )					// 左横壁、壁検知値80
+#define R_SIDE_WALL					( 130 )						// 右横壁、壁検知値100
+#define L_SIDE_WALL					( 100 )					// 左横壁、壁検知値80
 #define R_FRONT_SKEW_ERR1				( 80 )//仮
 #define L_FRONT_SKEW_ERR1				( 70 )
 #define R_FRONT_SKEW_ERR2				( 192 )

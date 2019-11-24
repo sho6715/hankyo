@@ -58,6 +58,8 @@ PRIVATE UCHAR		uc_back[ MAP_Y_SIZE ][ MAP_X_SIZE ];			// 迷路データ
 PUBLIC UCHAR		GOAL_MAP_X;					//ゴール座標変更プログラム用ｘ
 PUBLIC UCHAR		GOAL_MAP_Y;					//ゴール座標変更プログラム用ｙ
 
+PUBLIC BOOL			search_flag;
+
 PUBLIC UCHAR		GOAL_SIZE;
 //等高線マップを更新を止めるための移動区画規定変数
 PRIVATE UCHAR		uc_max_x = GOAL_MAP_X_def;
@@ -797,18 +799,18 @@ PRIVATE void MAP_moveNextBlock_Sura(
 			if( bl_resume == FALSE ){
 		
 				MOT_goBlock_Const( 1 );					// 1区画前進
-				uc_SlaCnt = 0;							// スラロームしていない
+//				uc_SlaCnt = 0;							// スラロームしていない
 			}
 			/* レジューム動作 */
 			else{
 				MOT_goBlock_FinSpeed( 1.0f, SEARCH_SPEED );		// 半区画前進(バックの移動量を含む)
-				uc_SlaCnt = 0;										// スラロームしていない
+//				uc_SlaCnt = 0;										// スラロームしていない
 			}
 			break;
 
 		// 右にスラロームする
 		case EAST:
-			if( uc_SlaCnt < 7 ){
+			if( uc_SlaCnt < 3 ){
 				MOT_goSla( MOT_R90S, PARAM_getSra( SLA_90 ) );	// 右スラローム
 				uc_SlaCnt++;
 			}
@@ -838,7 +840,7 @@ PRIVATE void MAP_moveNextBlock_Sura(
 
 		// 左にスラロームする
 		case WEST:
-			if( uc_SlaCnt < 7 ){
+			if( uc_SlaCnt < 3 ){
 				MOT_goSla( MOT_L90S, PARAM_getSra( SLA_90 ) );	// 左スラローム
 				uc_SlaCnt++;
 			}
@@ -1100,6 +1102,8 @@ PUBLIC void MAP_searchGoal(
 	UCHAR uc_goalY;
 	UCHAR uc_staX;
 	UCHAR uc_staY;
+	
+	search_flag = TRUE;
 
 	if (en_search == SEARCH_RETURN){
 		uc_goalX = uc_trgX;
@@ -1122,7 +1126,7 @@ PUBLIC void MAP_searchGoal(
 	f_MoveBackDist = 0;
 	uc_SlaCnt = 0;
 	if(uc_trgX == GOAL_MAP_X && uc_trgY == GOAL_MAP_Y){
-		f_MoveBackDist = 0.3;
+		f_MoveBackDist = MOVE_BACK_DIST;
 	}
 	
 	log_flag_on();	//ログ関数スタート（大会時削除）
@@ -1215,7 +1219,7 @@ PUBLIC void MAP_searchGoal(
 			break;
 		}
 	}
-
+	search_flag = FALSE;
 	TIME_wait(1000);
 //	SYS_setEnable( SYS_MODE );				// モード変更有効
 

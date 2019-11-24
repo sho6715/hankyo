@@ -317,7 +317,7 @@ PRIVATE void MODE_exe0( void )
 
 		case MODE_5:
 			LED = LED_ALL_ON;
-//			MAP_showLog();
+			MAP_showLog();
 			break;
 
 		case MODE_6:
@@ -415,12 +415,18 @@ PRIVATE void MODE_exe( void )
 			DCM_staMot(DCM_L);
 			DCM_setDirCw(DCM_R);
 			DCM_setDirCw(DCM_L);
+			log_flag_on();
 			DCM_setPwmDuty(DCM_R,100);//*FF_BALANCE_R);
 			DCM_setPwmDuty(DCM_L,100);//*FF_BALANCE_L);
-			TIME_wait(1000);
-			DCM_brakeMot(DCM_R);
-			DCM_brakeMot(DCM_L);
-		
+			while(1){
+				recv_spi_encoder();
+				ENC_print();
+				TIME_wait(1);
+				if( SW_ON == SW_INC_PIN )break;
+			}
+			DCM_brakeMot( DCM_R );		// ブレーキ
+			DCM_brakeMot( DCM_L );		// ブレーキ
+			log_flag_off();
 			break;
 			
 		case MODE_2:
@@ -465,7 +471,7 @@ PRIVATE void MODE_exe( void )
 			MAP_Goalsize(1);
 //			log_flag_on();
 
-			MAP_searchGoal( 0, 0, SEARCH, SEARCH_SURA );
+			MAP_searchGoal( 0, 0, SEARCH, SEARCH_RETURN );
 
 //			log_flag_off();
 
@@ -540,14 +546,14 @@ PRIVATE void MODE_exe( void )
 			PARAM_setSpeedType( PARAM_TRUN, PARAM_SLOW );							// [旋回] 速度普通
 			PARAM_setSpeedType( PARAM_SLA,  PARAM_SLOW );							// [スラ] 速度普通
 
-			PARAM_makeSra( (FLOAT)SEARCH_SPEED, 200.0f, 2500.0f, SLA_90 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ
+			PARAM_makeSra( (FLOAT)SEARCH_SPEED, 250.0f, 2500.0f, SLA_90 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ
 
 			LED = LED_ALL_OFF;
 			TIME_wait(100);
 			log_flag_on();
-			MOT_goBlock_FinSpeed( 1.0, 300 );
+			MOT_goBlock_FinSpeed( 0.5, 300 );
 			MOT_goSla(MOT_R90S,PARAM_getSra( SLA_90 ));
-			MOT_goBlock_FinSpeed( 1.0, 0 );
+			MOT_goBlock_FinSpeed( 0.5, 0 );
 			log_flag_off();
 			break;
 
@@ -575,6 +581,12 @@ PRIVATE void MODE_exe( void )
 			TIME_wait(100);
 			log_flag_on();
 			MOT_turn(MOT_R90);
+			TIME_wait(200);
+			MOT_turn(MOT_L90);
+			TIME_wait(200);
+			MOT_turn(MOT_R180);
+			TIME_wait(200);
+			MOT_turn(MOT_L180);
 			log_flag_off();
 			break;
 			
@@ -618,13 +630,16 @@ PRIVATE void MODE_exe( void )
 			
 		case MODE_14:
 			LED = LED_ALL_ON;
-
+			map_erase();
+			LED = LED_ALL_OFF;
 			
 			break;
 			
 		case MODE_15:
 			LED = LED_ALL_ON;
-
+			TIME_wait(1000);
+			map_copy();
+			LED = LED_ALL_OFF;
 			
 			break;
 			
@@ -762,7 +777,7 @@ PRIVATE void SYS_start( void )
 	printf(" ┗━━━━━━━━━━━━━━━━━━━━━┛\r\n");
 
 	PARAM_makeSra( (FLOAT)SEARCH_SPEED, 100.0f, 2500.0f, SLA_45 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ200 2000	T	200 2000
-	PARAM_makeSra( (FLOAT)SEARCH_SPEED, 200.0f, 2500.0f, SLA_90 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ
+	PARAM_makeSra( (FLOAT)SEARCH_SPEED, 250.0f, 2500.0f, SLA_90 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ
 	PARAM_makeSra( (FLOAT)SEARCH_SPEED, 150.0f, 6000.0f, SLA_135 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ300 4500		300 4000
 	PARAM_makeSra( (FLOAT)SEARCH_SPEED, 200.0f, 7000.0f, SLA_N90 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ500 5000		500 5000
 

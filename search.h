@@ -46,7 +46,6 @@ typedef enum{
 typedef enum{
 	SEARCH =0,			// 探索
 	BEST_WAY,			// 最短
-	SEARCH_RETURN,
 	MAP_ACT_MODE_MAX,
 }enMAP_ACT_MODE;
 
@@ -55,6 +54,7 @@ typedef enum{
 	SEARCH_TURN =0,		// 超信地旋回探索
 	SEARCH_SURA,		// スラローム探索
 	SEARCH_SKEW,		// 斜め探索
+	SEARCH_RETURN,
 	SEARCH_MAX,
 }enSEARCH_MODE;
 
@@ -82,7 +82,7 @@ extern PUBLIC USHORT		us_cmap[MAP_Y_SIZE][MAP_X_SIZE];		///< 等高線 データ
 
 extern PUBLIC UCHAR		GOAL_MAP_X;					//ゴール座標変更プログラム用ｘ
 extern PUBLIC UCHAR		GOAL_MAP_Y;					//ゴール座標変更プログラム用ｙ
-
+extern PUBLIC BOOL		search_flag;
 //**************************************************
 // プロトタイプ宣言（ファイル内で必要なものだけ記述）
 //**************************************************

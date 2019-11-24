@@ -20,6 +20,7 @@
 #include <init.h>
 #include <parameters.h>
 #include <hal_dist.h>
+#include <search.h>
 
 //**************************************************
 // 定義（define）
@@ -275,6 +276,9 @@ PRIVATE	LONG	ENC_L_CNT_old = 0;
 //ログ用デューティー
 PRIVATE	FLOAT	f_Duty_R;
 PRIVATE	FLOAT	f_Duty_L;
+
+//抜け出し用タイム
+PRIVATE FLOAT	straight_wait;
 
 PRIVATE CHAR	i;
 
@@ -1063,7 +1067,8 @@ PUBLIC void ENC_setref(void)
 // *************************************************************************/
 PUBLIC void ENC_print(void)
 {
-	printf("エンコーダ [R]=%d [L]=%d \r",ENC_R_CNT*360/65536,ENC_L_CNT*360/65536);
+//	printf("エンコーダ [R]=%d [L]=%d \r",ENC_R_CNT*360/65536,ENC_L_CNT*360/65536);
+	printf("%d,%d \r\n",ENC_R_CNT*360/65536,ENC_L_CNT*360/65536);
 }
 
 // *************************************************************************
@@ -1365,6 +1370,8 @@ PUBLIC void CTRL_setData( stCTRL_DATA* p_data )
 	
 	f_Time 					= 0;
 	f_TrgtTime				= p_data->f_time;
+
+	straight_wait			= 0;
 
 	CTRL_sta();				// 制御開始
 	
@@ -2196,6 +2203,7 @@ PUBLIC void CTRL_pol( void )
 	if( ( en_Type == CTRL_ACC ) || ( en_Type == CTRL_CONST ) || ( en_Type == CTRL_DEC ) ||( en_Type == CTRL_ENTRY_SURA ) || ( en_Type == CTRL_EXIT_SURA ) ||
 		( en_Type == CTRL_SKEW_ACC ) || ( en_Type == CTRL_SKEW_CONST ) || ( en_Type == CTRL_SKEW_DEC )
 	){
+		straight_wait = straight_wait+0.001;
 		f_duty10_R = f_feedFoard_speed * FF_BALANCE_R +  f_distCtrl + f_speedCtrl + f_angleCtrl + f_angleSpeedCtrl + f_distSenCtrl;	// 右モータPWM-DUTY比[0.1%]
 		f_duty10_L = f_feedFoard_speed * FF_BALANCE_L +  f_distCtrl + f_speedCtrl - f_angleCtrl - f_angleSpeedCtrl - f_distSenCtrl;	// 左モータPWM-DUTY比[0.1%]
 	}
@@ -2420,6 +2428,7 @@ PRIVATE void MOT_goBlock_AccConstDec( FLOAT f_fin, enMOT_ST_TYPE en_type, enMOT_
 				break;
 			}				// 途中で制御不能になった
 			MOT_setWallEdgeDist();
+			if((straight_wait>2.0)&&(search_flag == TRUE))break;
 		}
 //		printf("現在位置 %f \r\n",f_NowDist);
 	}
