@@ -71,11 +71,11 @@ void map_write(void)
 	map_add = (unsigned short*)g_sysMap;
 	
 	//DataFlashイレース
-	for(i=0;i<8;i++){
+	for(i=0;i<32;i++){
 		erase((ULONG)(MAP_ADD+i*32));
 	}
 	//マップデータをDataFlashに書き込む
-	for(i=0;i<128;i++){
+	for(i=0;i<512;i++){
 		write_eeflash((ULONG)(MAP_ADD+i*2),map_add);
 		map_add++;
 	}
@@ -97,7 +97,7 @@ void map_copy(void)
 	map_add = (unsigned short*)&g_sysMap;
 
 	//マップデータをRAMにコピー
-	for(i=0;i<128;i++){
+	for(i=0;i<512;i++){
 //		*map_add = *(unsigned short *)(MAP_ADD+i*2);
 		Flash_read((unsigned short *)(MAP_ADD+i*2),map_add);
 		map_add++;
@@ -119,7 +119,7 @@ void map_erase(void)
 	short i;
 	
 	//DataFlashイレース
-	for(i=0;i<8;i++){
+	for(i=0;i<32;i++){
 		erase((ULONG)(MAP_ADD+i*32));
 	}
 }
