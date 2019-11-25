@@ -1067,8 +1067,8 @@ PUBLIC void ENC_setref(void)
 // *************************************************************************/
 PUBLIC void ENC_print(void)
 {
-//	printf("エンコーダ [R]=%d [L]=%d \r",ENC_R_CNT*360/65536,ENC_L_CNT*360/65536);
-	printf("%d,%d \r\n",ENC_R_CNT*360/65536,ENC_L_CNT*360/65536);
+	printf("エンコーダ [R]=%d [L]=%d \r",ENC_R_CNT*360/65536,ENC_L_CNT*360/65536);
+//	printf("%d,%d \r\n",ENC_R_CNT*360/65536,ENC_L_CNT*360/65536);
 }
 
 // *************************************************************************
@@ -3259,7 +3259,7 @@ PUBLIC void MOT_turn( enMOT_TURN_CMD en_type )
 //	printf("finish3\n");
 
 	/* 停止 */
-	TIME_wait(500);				// 安定待ち
+	TIME_wait(200);				// 安定待ち
 	CTRL_stop();			// 制御停止
 	DCM_brakeMot( DCM_R );		// ブレーキ
 	DCM_brakeMot( DCM_L );		// ブレーキ
@@ -3378,7 +3378,7 @@ PUBLIC void MOT_goHitBackWall(void)
 //	printf("目標速度 %f 目標位置 %f\r\n",st_data.f_trgt,st_data.f_dist);
 
 	/*停止*/
-	TIME_wait(700);				// 安定待ち
+	TIME_wait(400);				// 安定待ち
 	CTRL_stop();			// 制御停止
 	DCM_brakeMot( DCM_R );		// ブレーキ
 	DCM_brakeMot( DCM_L );		// ブレーキ
@@ -3595,9 +3595,9 @@ PUBLIC void MOT_goSla( enMOT_SURA_CMD en_type, stSLA* p_sla )
 	st_data.f_angle			= st_info.f_angle;			// 目標角度
 	st_data.f_time			= p_sla->us_accAngvelTime * 0.001;			// [msec] → [sec]
 	CTRL_setData( &st_data );							// データセット
-
+//	LED = LED_ALL_ON;
 	if( IS_R_SLA( en_type ) == TRUE ) {		// -方向
-		while( ( f_NowAngle > st_info.f_angle + 0.2 ) || ( f_NowDist < st_data.f_dist ) ){			// 指定角度＋距離到達待ち
+		while( ( f_NowAngle > st_info.f_angle + 0.4 ) || ( f_NowDist < st_data.f_dist ) ){			// 指定角度＋距離到達待ち
 			if( SYS_isOutOfCtrl() == TRUE ){
 				CTRL_stop(); 
 				DCM_brakeMot( DCM_R );		// ブレーキ
@@ -3608,7 +3608,7 @@ PUBLIC void MOT_goSla( enMOT_SURA_CMD en_type, stSLA* p_sla )
 		}
 	}
 	else{
-		while( ( f_NowAngle < st_info.f_angle - 0.2) || ( f_NowDist < st_data.f_dist ) ){			// 指定角度＋距離到達待ち
+		while( ( f_NowAngle < st_info.f_angle - 0.4) || ( f_NowDist < st_data.f_dist ) ){			// 指定角度＋距離到達待ち
 			if( SYS_isOutOfCtrl() == TRUE ){
 				CTRL_stop(); 
 				DCM_brakeMot( DCM_R );		// ブレーキ
@@ -3637,7 +3637,7 @@ PUBLIC void MOT_goSla( enMOT_SURA_CMD en_type, stSLA* p_sla )
 	st_data.f_angle			= 0;						// 目標角度
 	st_data.f_time 			= 0;						// 目標時間 [sec] ← 指定しない
 	CTRL_setData( &st_data );							// データセット
-	
+//	LED =LED_ALL_OFF;
 	while( f_NowDist < ( st_data.f_dist - 0.01 ) ){	// 指定距離到達待ち
 		if( SYS_isOutOfCtrl() == TRUE ){
 			CTRL_stop(); 
@@ -3929,12 +3929,8 @@ PRIVATE void log_in2( 	FLOAT log1,FLOAT log2,
 // *************************************************************************/
 PUBLIC void log_interrupt ( void )
 {
-/*	log_in2(f_DistErrSum, f_NowSpeed,
-		f_TrgtSpeed, f_NowDist,
-		f_TrgtDist, f_AccAngleS,
-		GYRO_getSpeedErr(), f_TrgtAngleS,)
-		f_NowAngle, f_TrgtAngle,
-		templog1,templog2);
+/*	log_in2(GYRO_getSpeedErr(), f_TrgtAngleS,
+		f_NowAngle,f_TrgtAngle);
 */
 
 	log_in2(f_NowSpeed, f_TrgtSpeed,
@@ -3998,4 +3994,11 @@ PUBLIC void log_read2(void)
 		Log_1[i],Log_2[i],Log_3[i],Log_4[i],Log_5[i],Log_6[i],Log_7[i],Log_8[i],Log_9[i],Log_10[i],Log_11[i],Log_12[i]);
 		i++;
 	}
+
+/*	while(i<log_num){
+		printf("%5.2f,%5.2f,%5.2f,%5.2f\n\r",
+		Log_1[i],Log_2[i],Log_3[i],Log_4[i]);
+		i++;
+	}
+*/
 }

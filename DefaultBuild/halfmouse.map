@@ -1,4 +1,4 @@
-Renesas Optimizing Linker (W2.08.00 )             24-Nov-2019 17:34:51
+Renesas Optimizing Linker (W2.08.00 )             25-Nov-2019 21:08:36
 
 *** Options ***
 
@@ -38,11 +38,11 @@ SECTION                            START      END         SIZE   ALIGN
 B_1
                                   00000004  00003436      3433   1
 R_1
-                                  00003437  0000348f        59   1
+                                  00003437  00003491        5b   1
 B_2
-                                  00003490  00003ce5       856   2
+                                  00003492  00003ce7       856   2
 R_2
-                                  00003ce6  00003d05        20   2
+                                  00003ce8  00003d07        20   2
 B
                                   00003d08  000067ff      2af8   4
 R
@@ -70,23 +70,23 @@ C$VTBL
 C$VECT
                                   fff81f38  fff82337       400   4
 D_1
-                                  fff82338  fff82390        59   1
+                                  fff82338  fff82392        5b   1
 D_2
-                                  fff82392  fff823b1        20   2
+                                  fff82394  fff823b3        20   2
 D
                                   fff823b4  fff82703       350   4
 P
-                                  fff82704  fff8a368      7c65   1
+                                  fff82704  fff8a9d5      82d2   1
 PIntPRG
-                                  fff8a369  fff8a52a       1c2   1
+                                  fff8a9d6  fff8ab9b       1c6   1
 W_1
-                                  fff8a52b  fff8a567        3d   1
+                                  fff8ab9c  fff8abd8        3d   1
 W_2
-                                  fff8a568  fff8a5c5        5e   2
+                                  fff8abda  fff8ac37        5e   2
 W
-                                  fff8a5c8  fff8a5c8         0   4
+                                  fff8ac38  fff8ac38         0   4
 L
-                                  fff8a5c8  fff8aae4       51d   4
+                                  fff8ac38  fff8b168       531   4
 $ADDR_C_FFFFFF80
                                   ffffff80  ffffff83         4   1
 $ADDR_C_FFFFFFA0

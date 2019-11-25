@@ -379,6 +379,8 @@ PRIVATE void MODE_exe( void )
 {
 //	USHORT *read;
 	enMAP_HEAD_DIR		en_endDir;
+
+	UCHAR i;
 	GYRO_SetRef();
 	ENC_setref();
 	Failsafe_flag_off();
@@ -469,11 +471,11 @@ PRIVATE void MODE_exe( void )
 			TIME_wait(1000);
 			LED = LED_ALL_OFF;
 			MAP_Goalsize(1);
-//			log_flag_on();
+			log_flag_on();
 
 			MAP_searchGoal( 0, 0, SEARCH, SEARCH_RETURN );
 
-//			log_flag_off();
+			log_flag_off();
 
 			TIME_wait(1000);
 			if (( SW_ON == SW_INC_PIN )||(SYS_isOutOfCtrl() == TRUE))break;
@@ -592,30 +594,95 @@ PRIVATE void MODE_exe( void )
 			
 		case MODE_9:
 			LED = LED_ALL_ON;
-			MOT_setTrgtSpeed(SEARCH_SPEED);
+			TIME_wait(1000);
+
+			MOT_setTrgtSpeed(SEARCH_SPEED*2);
+			MOT_setSuraStaSpeed( (FLOAT)SEARCH_SPEED );							// スラローム開始速度設定
 			PARAM_setSpeedType( PARAM_ST,   PARAM_SLOW );							// [直進] 速度普通
 			PARAM_setSpeedType( PARAM_TRUN, PARAM_SLOW );							// [旋回] 速度普通
 			PARAM_setSpeedType( PARAM_SLA,  PARAM_SLOW );							// [スラ] 速度普通
 			LED = LED_ALL_OFF;
-			TIME_wait(100);
-			MOT_goBlock_FinSpeed( 6.5, 300 );
-			MOT_goSla(MOT_R90S,PARAM_getSra( SLA_90 ));
-			MOT_goBlock_FinSpeed( 2.0, 300 );
-			MOT_goSla(MOT_R90S,PARAM_getSra( SLA_90 ));
-			MOT_goBlock_FinSpeed( 1.0, 300 );
-			MOT_goSla(MOT_L90S,PARAM_getSra( SLA_90 ));
+			Failsafe_flag_off();
+			
+			MAP_setPos( 0, 0, NORTH );												// スタート位置
+			MAP_makeContourMap( GOAL_MAP_X, GOAL_MAP_Y, BEST_WAY );					// 等高線マップを作る
+			MAP_makeCmdList( 0, 0, NORTH, GOAL_MAP_X, GOAL_MAP_Y, &en_endDir );		// ドライブコマンド作成
+			MAP_makeSuraCmdList();													// スラロームコマンド作成
+			MAP_makeSkewCmdList();													// 斜めコマンド作成
+			MAP_drive( MAP_DRIVE_SURA );
+			TIME_wait(500);
+			MOT_turn(MOT_R180);
+			MAP_actGoalLED();
 
 			
 			break;
 			
 		case MODE_10:
 			LED = LED_ALL_ON;
-			
+			MOT_setTrgtSpeed(SEARCH_SPEED);
+			MOT_setSuraStaSpeed( (FLOAT)SEARCH_SPEED );							// スラローム開始速度設定
+			PARAM_setSpeedType( PARAM_ST,   PARAM_SLOW );							// [直進] 速度普通
+			PARAM_setSpeedType( PARAM_TRUN, PARAM_SLOW );							// [旋回] 速度普通
+			PARAM_setSpeedType( PARAM_SLA,  PARAM_SLOW );							// [スラ] 速度普通
+			LED = LED_ALL_OFF;
+			Failsafe_flag_off();
+			MOT_goBlock_FinSpeed( 1.5, 300 );
+			for(i = 0;i<5;i++){
+				MOT_goSla(MOT_R90S,PARAM_getSra( SLA_90 ));
+				MOT_goBlock_Const( 1.0, 300 );
+				MOT_goSla(MOT_R90S,PARAM_getSra( SLA_90 ));
+				MOT_goBlock_Const( 1.0, 300 );
+				MOT_goSla(MOT_R90S,PARAM_getSra( SLA_90 ));
+				MOT_goBlock_Const( 1.0, 300 );
+				MOT_goSla(MOT_R90S,PARAM_getSra( SLA_90 ));
+				MOT_goBlock_Const( 1.0, 300 );
+			}
+			MOT_goBlock_FinSpeed( 0.5, 0 );
 			break;
 			
 		case MODE_11:
 			LED = LED_ALL_ON;
-			
+			LED = LED_ALL_ON;
+			MOT_setTrgtSpeed(SEARCH_SPEED);
+			MOT_setSuraStaSpeed( (FLOAT)SEARCH_SPEED );							// スラローム開始速度設定
+			PARAM_setSpeedType( PARAM_ST,   PARAM_SLOW );							// [直進] 速度普通
+			PARAM_setSpeedType( PARAM_TRUN, PARAM_SLOW );							// [旋回] 速度普通
+			PARAM_setSpeedType( PARAM_SLA,  PARAM_SLOW );							// [スラ] 速度普通
+			LED = LED_ALL_OFF;
+			TIME_wait(100);
+			PARAM_makeSra( (FLOAT)SEARCH_SPEED, 200.0f, 2500.0f, SLA_90 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ
+			MAP_Goalsize(Goalsize);
+			MAP_setPos( 0, 0, NORTH );							// スタート位置
+
+			log_flag_on();
+
+			MAP_searchGoalKnown(GOAL_MAP_X, GOAL_MAP_Y, SEARCH);
+
+			log_flag_off();
+
+//			POS_stop();			// debug
+			if (( SW_ON == SW_INC_PIN )||(SYS_isOutOfCtrl() == TRUE))break;
+			map_write();
+			/* 帰りのスラローム探索 */
+			TIME_wait(1000);
+			LED = LED_ALL_OFF;
+			MAP_Goalsize(1);
+			log_flag_on();
+			MAP_searchGoalKnown(0, 0, SEARCH);
+//			MAP_searchGoal( 0, 0, SEARCH, SEARCH_RETURN );
+
+			log_flag_off();
+
+			TIME_wait(1000);
+			if (( SW_ON == SW_INC_PIN )||(SYS_isOutOfCtrl() == TRUE))break;
+			map_write();
+//			PARAM_setCntType( TRUE );								// 最短走行
+			MAP_setPos( 0, 0, NORTH );								// スタート位置
+			MAP_makeContourMap( GOAL_MAP_X, GOAL_MAP_Y, BEST_WAY );					// 等高線マップを作る
+			MAP_makeCmdList( 0, 0, NORTH, GOAL_MAP_X, GOAL_MAP_Y, &en_endDir );		// ドライブコマンド作成
+			MAP_makeSuraCmdList();													// スラロームコマンド作成
+			MAP_makeSkewCmdList();
+			break;
 			break;
 			
 		case MODE_12:

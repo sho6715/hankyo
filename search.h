@@ -101,4 +101,7 @@ PUBLIC void MAP_ClearMapData( void );
 
 PUBLIC void MAP_Goalsize(int size);
 
+//TKR
+PUBLIC void MAP_searchGoalKnown(UCHAR uc_trgX, UCHAR uc_trgY, enMAP_ACT_MODE en_type);
+
 #endif //_SEARCH_H
