@@ -473,7 +473,7 @@ PRIVATE void MODE_exe( void )
 			MAP_Goalsize(1);
 			log_flag_on();
 
-			MAP_searchGoal( 0, 0, SEARCH, SEARCH_RETURN );
+			MAP_searchGoal( 0, 0, SEARCH, SEARCH_SURA );
 
 			log_flag_off();
 
@@ -504,7 +504,7 @@ PRIVATE void MODE_exe( void )
 
 			log_flag_on();
 
-			MAP_searchGoal( GOAL_MAP_X, GOAL_MAP_Y, SEARCH, SEARCH_SURA );			// ÉSÅ[Éãê›íË
+			MAP_searchGoalKnown( GOAL_MAP_X, GOAL_MAP_Y, SEARCH, SEARCH_SURA );			// ÉSÅ[Éãê›íË
 
 			log_flag_off();
 
@@ -519,7 +519,7 @@ PRIVATE void MODE_exe( void )
 
 //			log_flag_on();
 
-			MAP_searchGoal( 0, 0, SEARCH, SEARCH_SURA );
+			MAP_searchGoalKnown( 0, 0, SEARCH, SEARCH_RETURN );
 
 //			log_flag_off();
 

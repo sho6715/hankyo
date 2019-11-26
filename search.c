@@ -1415,7 +1415,165 @@ PUBLIC void MAP_searchGoal(
 				
 				MOT_goBlock_FinSpeed( 0.5 + f_MoveBackDist, SEARCH_SPEED );		// 半区画前進(バックの移動量を含む)
 			}
-			MAP_makeMapData();										// 壁データから迷路データを作成			← ここでデータ作成をミスっている
+			MAP_makeMapData();		// 壁データから迷路データを作成
+			
+			MAP_calcMouseDir(CONTOUR_SYSTEM, &en_head);				// 等高線MAP法で進行方向を算出			← 誤ったMAPを作成
+			
+			/* 次の区画へ移動 */
+			if(( mx == uc_trgX ) && ( my == uc_trgY )){
+				MAP_actGoal();										// ゴール時の動作
+				break;
+			}
+			else{
+				MAP_moveNextBlock_Sura(en_head, &bl_type, FALSE );	// 次の区画へ移動						← ここで改めてリリースチェック＋壁再度作成＋等高線＋超信地旋回動作
+//				MAP_moveNextBlock_acc(en_head, &bl_type);
+			}
+		}
+		/* 帰還探索 */
+		else if (SEARCH_RETURN == en_search) {
+			
+			if( TRUE == bl_type ){
+				
+				MOT_goBlock_FinSpeed( 0.5 + f_MoveBackDist, SEARCH_SPEED );		// 半区画前進(バックの移動量を含む)
+			}
+			MAP_makeMapData();		// 壁データから迷路データを作成
+			
+//			MAP_calcMouseDir(CONTOUR_SYSTEM, &en_head);				
+			
+			/* 次の区画へ移動 */
+			if ((us_cmap[my][mx] == 0)||((g_sysMap[uc_trgY][uc_trgX]&0xf0) == 0xf0)) {
+				if ((mx == 0)&&(my == 0)){
+					MAP_actGoal();
+					break;
+				}
+//				MAP_moveNextBlock_Sura(en_head, &bl_type, FALSE);	// 次の区画へ移動
+//				MAP_makeContourMap(uc_goalX, uc_goalX, en_type);//自己座標で処理終了するため全体マップ作成不能20191121
+				MAP_makeReturnContourMap(uc_staX,uc_staY);
+				MAP_searchCmdList(uc_staX, uc_staY, en_Head, uc_goalX, uc_goalX, &en_endDir);
+				uc_trgX = Return_X;
+				uc_trgY = Return_Y;
+				MAP_makeContourMap( uc_trgX, uc_trgY, en_type );		// 等高線マップを作る
+				MAP_calcMouseDir(CONTOUR_SYSTEM, &en_head);	
+				MAP_moveNextBlock_Sura(en_head, &bl_type, FALSE);	// 次の区画へ移動
+//				MAP_moveNextBlock_acc(en_head, &bl_type);
+			}
+			else {
+				MAP_makeContourMap( uc_trgX, uc_trgY, en_type );		// 等高線マップを作る
+				MAP_calcMouseDir(CONTOUR_SYSTEM, &en_head);	
+				MAP_moveNextBlock_Sura(en_head, &bl_type, FALSE);	// 次の区画へ移動						← ここで改めてリリースチェック＋壁再度作成＋等高線＋超信地旋回動作
+//				MAP_moveNextBlock_acc(en_head, &bl_type);
+			}
+//			LED_count(uc_trgY);
+		}
+
+		
+		/* 途中で制御不能になった */
+		if( SYS_isOutOfCtrl() == TRUE ){
+			CTRL_stop();
+			DCM_brakeMot( DCM_R );		// ブレーキ
+			DCM_brakeMot( DCM_L );		// ブレーキ
+			
+			/* 迷路関連を初期化 */
+			en_Head		= NORTH;
+			mx			= 0;
+			my			= 0;
+			f_MoveBackDist = 0;
+			
+			// DCMCは下位モジュールで既にクリアと緊急停止を行っている。
+			break;
+		}
+	}
+	search_flag = FALSE;
+	TIME_wait(1000);
+//	SYS_setEnable( SYS_MODE );				// モード変更有効
+
+}
+
+// *************************************************************************
+//   機能		： 探索（既知区間加速）
+//   注意		： なし
+//   メモ		： なし
+//   引数		： 目標x座標、目標y座標、探索方法
+//   返り値		： なし
+// **************************    履    歴    *******************************
+// 		v1.0		2019.11.3			TKR			searchGoal関数から移植
+// *************************************************************************/
+PUBLIC void MAP_searchGoalKnown(
+	UCHAR 			uc_trgX, 		///< [in] 目標x座標
+	UCHAR 			uc_trgY, 		///< [in] 目標y座標 
+	enMAP_ACT_MODE 	en_type, 		///< [in] 探索方法
+	enSEARCH_MODE	en_search 		///< [in] 探索方法
+){
+	enMAP_HEAD_DIR	en_head = NORTH;
+	BOOL		bl_type = TRUE;			// 現在位置、FALSE: １区間前進状態、TURE:半区間前進状態
+	enMAP_HEAD_DIR		en_endDir;
+	
+	UCHAR uc_goalX;
+	UCHAR uc_goalY;
+	UCHAR uc_staX;
+	UCHAR uc_staY;
+	
+	search_flag = TRUE;
+
+	if (en_search == SEARCH_RETURN){
+		uc_goalX = uc_trgX;
+		uc_goalY = uc_trgY;
+		uc_staX = mx;
+		uc_staY = my;
+//		printf("mx%d,my%d\n", mx, my);
+		MAP_makeContourMap(uc_trgX, uc_trgY, en_type);
+		MAP_searchCmdList(uc_staX, uc_staY, en_Head, uc_goalX, uc_goalX, &en_endDir);
+		uc_trgX = Return_X;
+		uc_trgY = Return_Y;
+//		printf("goalx%d,goaly%d\n", Return_X, Return_Y);
+//		MAP_showcountLog();
+	}
+
+//	SYS_setDisable( SYS_MODE );				// モード変更禁止
+
+	MOT_setTrgtSpeed(SEARCH_SPEED);		// 目標速度
+	MOT_setNowSpeed( 0.0f );
+	f_MoveBackDist = 0;
+	uc_SlaCnt = 0;
+	if(uc_trgX == GOAL_MAP_X && uc_trgY == GOAL_MAP_Y){
+		f_MoveBackDist = MOVE_BACK_DIST;
+	}
+	
+	log_flag_on();	//ログ関数スタート（大会時削除）
+	
+	/* 迷路探索 */
+	while(1){
+		MAP_refMousePos( en_Head );								// 座標更新
+//		MAP_makeContourMap( uc_trgX, uc_trgY, en_type );		// 等高線マップを作る
+		
+		/* 超信地旋回探索 */
+		if( SEARCH_TURN == en_search ){
+			MAP_makeContourMap( uc_trgX, uc_trgY, en_type );		// 等高線マップを作る
+			if( TRUE == bl_type ){
+				MOT_goBlock_FinSpeed( 0.5 + f_MoveBackDist, SEARCH_SPEED );		// 半区画前進(バックの移動量を含む)
+			}
+			MAP_makeMapData();												// 壁データから迷路データを作成			← ここでデータ作成をミスっている
+			MAP_calcMouseDir(CONTOUR_SYSTEM, &en_head);						// 等高線MAP法で進行方向を算出			← 誤ったMAPを作成
+			
+			/* 次の区画へ移動 */
+			if(( mx == uc_trgX ) && ( my == uc_trgY )){
+				MAP_actGoal();										// ゴール時の動作
+				break;
+			}
+			else{
+				MAP_moveNextBlock_acc(en_head, &bl_type);				// 次の区画へ移動								← ここで改めてリリースチェック＋壁再度作成＋等高線＋超信地旋回動作
+			}
+		}
+		/* スラローム探索 */
+		else if( SEARCH_SURA == en_search ){
+			MAP_makeContourMap( uc_trgX, uc_trgY, en_type );		// 等高線マップを作る
+			if( TRUE == bl_type ){
+				
+				MOT_goBlock_FinSpeed( 0.5 + f_MoveBackDist, SEARCH_SPEED );		// 半区画前進(バックの移動量を含む)
+			}
+			if (st_known.bl_Known != TRUE) {
+				MAP_makeMapData();		// 壁データから迷路データを作成
+			}
 			MAP_calcMouseDir(CONTOUR_SYSTEM, &en_head);				// 等高線MAP法で進行方向を算出			← 誤ったMAPを作成
 			
 			/* 次の区画へ移動 */
@@ -1435,7 +1593,9 @@ PUBLIC void MAP_searchGoal(
 				
 				MOT_goBlock_FinSpeed( 0.5 + f_MoveBackDist, SEARCH_SPEED );		// 半区画前進(バックの移動量を含む)
 			}
-			MAP_makeMapData();										// 壁データから迷路データを作成			← ここでデータ作成をミスっている
+			if (st_known.bl_Known != TRUE) {
+				MAP_makeMapData();		// 壁データから迷路データを作成
+			}
 //			MAP_calcMouseDir(CONTOUR_SYSTEM, &en_head);				
 			
 			/* 次の区画へ移動 */
@@ -1485,61 +1645,4 @@ PUBLIC void MAP_searchGoal(
 	TIME_wait(1000);
 //	SYS_setEnable( SYS_MODE );				// モード変更有効
 
-}
-
-// *************************************************************************
-//   機能		： 探索（既知区間加速）
-//   注意		： なし
-//   メモ		： なし
-//   引数		： 目標x座標、目標y座標、探索方法
-//   返り値		： なし
-// **************************    履    歴    *******************************
-// 		v1.0		2019.11.3			TKR			searchGoal関数から移植
-// *************************************************************************/
-PUBLIC void MAP_searchGoalKnown(UCHAR uc_trgX, UCHAR uc_trgY, enMAP_ACT_MODE en_type)
-{
-	enMAP_HEAD_DIR	en_head = NORTH;
-	BOOL			bl_type = TRUE;			// 現在位置、FALSE: １区間前進状態、TURE:半区間前進状態
-
-	MOT_setTrgtSpeed(SEARCH_SPEED);		// 目標速度
-	MOT_setNowSpeed(0.0f);
-
-	/* ゴール座標目指すときは尻当て考慮 */
-	if ((uc_trgX == GOAL_MAP_X) && (uc_trgY == GOAL_MAP_Y)) {
-		f_MoveBackDist = MOVE_BACK_DIST;
-	}
-	else {
-		f_MoveBackDist = 0;
-	}
-
-	uc_SlaCnt = 0;
-
-	/* 迷路探索 */
-	while (1) {
-		MAP_refMousePos(en_Head);							// 座標更新
-		MAP_makeContourMap(uc_trgX, uc_trgY, en_type);	// 等高線マップを作る
-//		LED_count(my);
-		if (TRUE == bl_type) {
-			MOT_goBlock_FinSpeed(0.5 + f_MoveBackDist, SEARCH_SPEED);		// 半区画前進(バックの移動量を含む)
-			f_MoveBackDist = 0;
-		}
-
-		// 既知区間加速するときは実行しない
-		if (st_known.bl_Known != TRUE) {
-			MAP_makeMapData();		// 壁データから迷路データを作成
-//			SPK_debug();
-		}
-
-		MAP_calcMouseDir(CONTOUR_SYSTEM, &en_head);			// 等高線MAP法で進行方向を算出
-
-		/* 次の区画へ移動 */
-		if ((mx == uc_trgX) && (my == uc_trgY)) {
-			MAP_actGoal();		// ゴール時の動作
-			return;				// 探索終了
-		}
-		else {
-			MAP_moveNextBlock_acc(en_head, &bl_type);
-
-		}
-	}
 }
