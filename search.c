@@ -73,7 +73,7 @@ typedef struct
 	BOOL	bl_Known;
 }stMAP_KNOWN;
 
-PRIVATE stMAP_KNOWN		st_known = { 1,FALSE };
+PRIVATE stMAP_KNOWN		st_known = { 0,FALSE };
 
 //**************************************************
 // プロトタイプ宣言（ファイル内で必要なものだけ記述）
@@ -1322,15 +1322,16 @@ PRIVATE void MAP_moveNextBlock_acc(enMAP_HEAD_DIR en_head, BOOL* p_type)
 
 		if (MAP_KnownAcc() == FALSE) {					// 次に進む区画が未探索のとき
 
-			if (st_known.uc_StrCnt <= 2) {
+			if (st_known.uc_StrCnt < 2) {
 				MOT_goBlock_Const(1);					// 1区画の場合は等速のまま
 			}
 			else {
 				MOT_setTrgtSpeed(MAP_KNOWN_ACC_SPEED);									// 既知区間加速するときの目標速度	
-				MOT_goBlock_FinSpeed((FLOAT)(st_known.uc_StrCnt - 1), SEARCH_SPEED);				// n区画前進
+				MOT_goBlock_FinSpeed((FLOAT)(st_known.uc_StrCnt), SEARCH_SPEED);				// n区画前進
 				MOT_setTrgtSpeed(SEARCH_SPEED);										// 目標速度をデフォルト値に戻す
+				MOT_goBlock_Const(1);	////////////////////
 			}
-			st_known.uc_StrCnt = 1;
+			st_known.uc_StrCnt = 0;
 			st_known.bl_Known = FALSE;
 
 		}
@@ -1346,17 +1347,17 @@ PRIVATE void MAP_moveNextBlock_acc(enMAP_HEAD_DIR en_head, BOOL* p_type)
 	case EAST:
 
 		if (st_known.bl_Known == TRUE) {		// 直線分を消化
-			if (st_known.uc_StrCnt <= 2) {
+			if (st_known.uc_StrCnt < 2) {
 				MOT_goBlock_Const(1);					// 1区画の場合は等速のまま
 			}
 			else {
 				LED = LED_ALL_ON;
 				MOT_setTrgtSpeed(MAP_KNOWN_ACC_SPEED);									// 既知区間加速するときの目標速度	
-				MOT_goBlock_FinSpeed((FLOAT)(st_known.uc_StrCnt - 1), SEARCH_SPEED);				// n区画前進
+				MOT_goBlock_FinSpeed((FLOAT)(st_known.uc_StrCnt), SEARCH_SPEED);				// n区画前進
 				MOT_setTrgtSpeed(SEARCH_SPEED);										// 目標速度をデフォルト値に戻す
 				LED = LED_ALL_OFF;
 			}
-			st_known.uc_StrCnt = 1;		/////////////////////////////////////////
+			st_known.uc_StrCnt = 0;		/////////////////////////////////////////
 			st_known.bl_Known = FALSE;
 		}
 
@@ -1393,21 +1394,21 @@ PRIVATE void MAP_moveNextBlock_acc(enMAP_HEAD_DIR en_head, BOOL* p_type)
 	case WEST:
 
 		if (st_known.bl_Known == TRUE) {		// 直線分を消化
-			if (st_known.uc_StrCnt <= 2) {
+			if (st_known.uc_StrCnt < 2) {
 				MOT_goBlock_Const(1);					// 1区画の場合は等速のまま
 			}
 			else {
 				LED = LED_ALL_ON;
 				MOT_setTrgtSpeed(MAP_KNOWN_ACC_SPEED);									// 既知区間加速するときの目標速度	
-				MOT_goBlock_FinSpeed((FLOAT)(st_known.uc_StrCnt - 1), SEARCH_SPEED);				// n区画前進
+				MOT_goBlock_FinSpeed((FLOAT)(st_known.uc_StrCnt), SEARCH_SPEED);				// n区画前進
 				MOT_setTrgtSpeed(SEARCH_SPEED);										// 目標速度をデフォルト値に戻す
 				LED = LED_ALL_OFF;
 			}
-			st_known.uc_StrCnt = 1;			//////////////////////////////////////
+			st_known.uc_StrCnt = 0;			//////////////////////////////////////
 			st_known.bl_Known = FALSE;
 		}
 
-		if( uc_SlaCnt < 7 ){
+		if( uc_SlaCnt < 3 ){
 				MOT_goSla( MOT_L90S, PARAM_getSra( SLA_90 ) );	// 左スラローム
 				uc_SlaCnt++;
 			}
@@ -1514,13 +1515,6 @@ PUBLIC void MAP_searchGoalKnown(UCHAR uc_trgX, UCHAR uc_trgY, enMAP_ACT_MODE en_
 		MAP_refMousePos(en_Head);							// 座標更新
 		MAP_makeContourMap(uc_trgX, uc_trgY, en_type);	// 等高線マップを作る
 
-		/* ダミー壁挿入 */
-	/*
-		if( (uc_trgX == GOAL_MAP_X) && (uc_trgY == GOAL_MAP_Y) ){
-			g_sysMap[0][0]	= 0x01;
-			g_sysMap[0][1]	= 0x04;
-		}
-	*/
 		if (TRUE == bl_type) {
 			MOT_goBlock_FinSpeed(0.5 + f_MoveBackDist, SEARCH_SPEED);		// 半区画前進(バックの移動量を含む)
 			f_MoveBackDist = 0;
@@ -1536,14 +1530,6 @@ PUBLIC void MAP_searchGoalKnown(UCHAR uc_trgX, UCHAR uc_trgY, enMAP_ACT_MODE en_
 
 		/* 次の区画へ移動 */
 		if ((mx == uc_trgX) && (my == uc_trgY)) {
-
-			/* ダミー壁削除 */
-		/*
-			if( (uc_trgX == GOAL_MAP_X) && (uc_trgY == GOAL_MAP_Y) ){
-				g_sysMap[0][0]	&= ~0x01;
-				g_sysMap[0][1]	&= ~0x04;
-			}
-		*/
 			MAP_actGoal();		// ゴール時の動作
 			return;				// 探索終了
 		}
