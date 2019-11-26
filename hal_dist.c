@@ -26,7 +26,7 @@
 // 定義（define）
 //**************************************************
 #define DIST_NO_WALL_DIV_FILTER				( 300 )						// 壁なしとする差分値
-#define DIST_REF_UP					( 150 )						// 壁なしと判断する際に基準値に加算する値
+#define DIST_REF_UP					( 20 )						// 壁なしと判断する際に基準値に加算する値
 /*
 #define R_FRONT_REF					( 350 )					// 右前壁、基準値　区画の中央において壁を見た値275
 #define L_FRONT_REF					( 280 )					// 左前壁、基準値210

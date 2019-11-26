@@ -42,5 +42,6 @@ PUBLIC BOOL MODE_DistRightCheck(void);
 PUBLIC BOOL MODE_DistLeftCheck(void);
 PUBLIC BOOL MODE_setWaitCheck(void);
 PUBLIC BOOL MODE_CheckExe(void);
+PUBLIC void LED_count(UCHAR number);
 
 #endif

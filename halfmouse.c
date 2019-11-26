@@ -486,6 +486,7 @@ PRIVATE void MODE_exe( void )
 			MAP_makeCmdList( 0, 0, NORTH, GOAL_MAP_X, GOAL_MAP_Y, &en_endDir );		// ドライブコマンド作成
 			MAP_makeSuraCmdList();													// スラロームコマンド作成
 			MAP_makeSkewCmdList();
+			LED = LED_ALL_OFF;
 			break;
 
 		case MODE_4:
@@ -532,6 +533,7 @@ PRIVATE void MODE_exe( void )
 			MAP_makeCmdList( 0, 0, NORTH, GOAL_MAP_X, GOAL_MAP_Y, &en_endDir );		// ドライブコマンド作成
 			MAP_makeSuraCmdList();													// スラロームコマンド作成
 			MAP_makeSkewCmdList();
+			LED = LED_ALL_OFF;
 			}
 			break;
 
@@ -682,7 +684,7 @@ PRIVATE void MODE_exe( void )
 			MAP_makeCmdList( 0, 0, NORTH, GOAL_MAP_X, GOAL_MAP_Y, &en_endDir );		// ドライブコマンド作成
 			MAP_makeSuraCmdList();													// スラロームコマンド作成
 			MAP_makeSkewCmdList();
-			break;
+			LED = LED_ALL_OFF;
 			break;
 			
 		case MODE_12:

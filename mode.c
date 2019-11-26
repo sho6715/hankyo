@@ -167,3 +167,67 @@ PUBLIC BOOL MODE_CheckExe(){
 	
 	return bl_check;
 }
+
+// *************************************************************************
+//   機能		： LED点灯用
+//   注意		： なし
+//   メモ		： なし
+//   引数		： なし
+//   返り値		： 待機状態から抜け出す：true	それ以外：false
+// **************************    履    歴    *******************************
+// 		v1.0		2019.11.26			sato			新規
+// *************************************************************************/
+PUBLIC void LED_count(UCHAR number)
+{
+	switch(number){
+		case 0:
+			LED = LED_ALL_OFF;
+			break;
+		case 1:
+			LED = LED1;
+			break;
+		case 2:
+			LED = LED2;
+			break;
+		case 3:
+			LED = LED3;
+			break;
+		case 4:
+			LED = LED4;
+			break;
+		case 5:
+			LED = LED5;
+			break;
+		case 6:
+			LED = LED6;
+			break;
+		case 7:
+			LED = LED7;
+			break;
+		case 8:
+			LED = LED8;
+			break;
+		case 9:
+			LED = LED9;
+			break;
+		case 10:
+			LED = LED10;
+			break;
+		case 11:
+			LED = LED11;
+			break;
+		case 12:
+			LED = LED12;
+			break;
+		case 13:
+			LED = LED13;
+			break;
+		case 14:
+			LED = LED14;
+			break;
+		case 15:
+			LED = LED_ALL_ON;;
+			break;
+
+	}
+}
