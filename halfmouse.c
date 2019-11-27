@@ -499,7 +499,7 @@ PRIVATE void MODE_exe( void )
 			LED = LED_ALL_OFF;
 			TIME_wait(100);
 			PARAM_makeSra( (FLOAT)SEARCH_SPEED, 200.0f, 2500.0f, SLA_90 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ
-
+			MAP_Goalsize(Goalsize);
 			MAP_setPos( 0, 0, NORTH );							// スタート位置
 
 			log_flag_on();
@@ -518,7 +518,7 @@ PRIVATE void MODE_exe( void )
 			LED = LED_ALL_OFF;
 
 //			log_flag_on();
-
+			MAP_Goalsize(1);
 			MAP_searchGoalKnown( 0, 0, SEARCH, SEARCH_RETURN );
 
 //			log_flag_off();
