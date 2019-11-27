@@ -25,7 +25,7 @@
 //**************************************************
 // 定義（define）
 //**************************************************
-#define DIST_NO_WALL_DIV_FILTER				( 300 )						// 壁なしとする差分値
+#define DIST_NO_WALL_DIV_FILTER				( 200 )						// 壁なしとする差分値
 #define DIST_REF_UP					( 20 )						// 壁なしと判断する際に基準値に加算する値
 /*
 #define R_FRONT_REF					( 350 )					// 右前壁、基準値　区画の中央において壁を見た値275
@@ -37,24 +37,24 @@
 #define R_SIDE_WALL					( 115 )						// 右横壁、壁検知値100
 #define L_SIDE_WALL					( 70 )					// 左横壁、壁検知値80
 */
-#define R_FRONT_REF					( 1060 )					// 右前壁、基準値　区画の中央において壁を見た値275
-#define L_FRONT_REF					( 1030 )					// 左前壁、基準値210
-#define R_SIDE_REF					( 670 )						// 右横壁、基準値230
-#define L_SIDE_REF					( 670 )						// 左横壁、基準値180
-#define R_FRONT_WALL					( 60 )						// 右前壁、壁検知値　区画の中央からずらして見たときの値（壁を見るための値）45
-#define L_FRONT_WALL					( 30 )					// 左前壁、壁検知値40
+#define R_FRONT_REF					( 1470 )					// 右前壁、基準値　区画の中央において壁を見た値275
+#define L_FRONT_REF					( 1470 )					// 左前壁、基準値210
+#define R_SIDE_REF					( 430 )						// 右横壁、基準値230
+#define L_SIDE_REF					( 350 )						// 左横壁、基準値180
+#define R_FRONT_WALL					( 70 )						// 右前壁、壁検知値　区画の中央からずらして見たときの値（壁を見るための値）45
+#define L_FRONT_WALL					( 40 )					// 左前壁、壁検知値40
 #define R_SIDE_WALL					( 120 )						// 右横壁、壁検知値100
-#define L_SIDE_WALL					( 90 )					// 左横壁、壁検知値80
+#define L_SIDE_WALL					( 95 )					// 左横壁、壁検知値80
 #define R_FRONT_SKEW_ERR1				( 80 )//仮
 #define L_FRONT_SKEW_ERR1				( 70 )
 #define R_FRONT_SKEW_ERR2				( 192 )
 #define L_FRONT_SKEW_ERR2				( 160 )
 #define R_FRONT_SKEW_ERR3				( 250 )
 #define L_FRONT_SKEW_ERR3				( 250 )
-#define R_FRONT_CTRL					( 900 )
-#define L_FRONT_CTRL					( 870 )
-#define R_FRONT_NOCTRL					( 1200 )
-#define L_FRONT_NOCTRL					( 1170 )
+#define R_FRONT_CTRL					( 1550 )
+#define L_FRONT_CTRL					( 1550 )
+#define R_FRONT_NOCTRL					( 1600 )
+#define L_FRONT_NOCTRL					( 1600 )
 
 
 #define		SEN_WAIT_CNT		(500)		//センサの発光安定待ち(実験値)

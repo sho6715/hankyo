@@ -1561,7 +1561,7 @@ PUBLIC void MAP_searchGoalKnown(
 				break;
 			}
 			else{
-				MAP_moveNextBlock_acc(en_head, &bl_type);				// 次の区画へ移動								← ここで改めてリリースチェック＋壁再度作成＋等高線＋超信地旋回動作
+				MAP_moveNextBlock(en_head, &bl_type);				// 次の区画へ移動								← ここで改めてリリースチェック＋壁再度作成＋等高線＋超信地旋回動作
 			}
 		}
 		/* スラローム探索 */

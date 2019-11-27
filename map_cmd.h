@@ -235,7 +235,7 @@ extern PUBLIC UCHAR	Return_Y;
 PUBLIC void MAP_makeCmdList( UCHAR uc_staX, UCHAR uc_staY, enMAP_HEAD_DIR en_staDir, UCHAR uc_endX, UCHAR uc_endY, enMAP_HEAD_DIR* en_endDir );
 PUBLIC void MAP_makeSuraCmdList( void );
 PUBLIC void MAP_makeSkewCmdList( void );
-//PUBLIC void MAP_drive( enMAP_DRIVE_TYPE en_driveType );
+PUBLIC void MAP_drive( enMAP_DRIVE_TYPE en_driveType );
 PROTECTED void MAP_setCmdPos( UCHAR uc_x, UCHAR uc_y, enMAP_HEAD_DIR en_dir );
 
 PUBLIC void MAP_showCmdLog( void );

@@ -66,7 +66,7 @@
 #define ANGLE_OFFSET2				( 0 )						// 角度のオフセット値（バッファリングによる誤差を埋めるための値）
 #define ANGLE_OFFSET3				( 0 )					// 角度のオフセット値（バッファリングによる誤差を埋めるための値）
 
-#define log_num			(200)					//ログ取得数（変更時はこちらを変更）
+#define log_num			(1000)					//ログ取得数（変更時はこちらを変更）
 
 //**************************************************
 // 列挙体（enum）
@@ -252,7 +252,7 @@ PRIVATE	FLOAT	Log_1[log_num];
 PRIVATE FLOAT	Log_2[log_num];
 PRIVATE FLOAT	Log_3[log_num];
 PRIVATE FLOAT	Log_4[log_num];
-PRIVATE FLOAT	Log_5[log_num];
+/*PRIVATE FLOAT	Log_5[log_num];
 PRIVATE FLOAT	Log_6[log_num];
 PRIVATE FLOAT	Log_7[log_num];
 PRIVATE FLOAT	Log_8[log_num];
@@ -260,7 +260,7 @@ PRIVATE FLOAT	Log_9[log_num];
 PRIVATE FLOAT	Log_10[log_num];
 PRIVATE FLOAT	Log_11[log_num];
 PRIVATE FLOAT	Log_12[log_num];
-
+*/
 PRIVATE	USHORT	log_count = 0;
 PUBLIC	BOOL	b_logflag = FALSE;
 
@@ -1329,8 +1329,11 @@ PUBLIC void CTRL_clrData( void )
 	f_TrgtAngle		= 0;						// [角度制御]   目標角度					（1[msec]毎に更新される）
 	
 	/* 制御データ */
+	f_SpeedErrSum	= 0;
 	f_DistErrSum 	= 0;						// [距離制御]   距離積分制御のサム値			（1[msec]毎に更新される）
+	f_AngleSErrSum	= 0;
 	f_AngleErrSum 	= 0;						// [角度制御]   角度積分制御のサム値			（1[msec]毎に更新される）
+	f_ErrSpeedBuf	= 0;
 	f_ErrDistBuf	= 0;						// [壁制御]     距離センサーエラー値のバッファ		（1[msec]毎に更新される）
 	f_ErrAngleSBuf  = 0;
 }
@@ -1949,7 +1952,7 @@ PUBLIC void CTRL_getAngleSpeedFB( FLOAT* p_err )
 	f_ErrAngleSBuf = f_err;		// 偏差をバッファリング	
 	
 	// 累積偏差クリア 
-	if( FABS( f_err ) < 1 ){
+	if( FABS( f_err ) < 0.3 ){
 		f_AngleSErrSum = 0;
 	}
 
@@ -2444,7 +2447,7 @@ PRIVATE void MOT_goBlock_AccConstDec( FLOAT f_fin, enMOT_ST_TYPE en_type, enMOT_
 		st_data.f_now			= st_Info.f_last;			// 現在速度
 		st_data.f_trgt			= st_Info.f_last;			// 目標速度
 		st_data.f_nowDist		= f_NowDist;				// 現在位置
-		st_data.f_dist			= f_NowDist + 180.0f;		// 等速完了位置（180.0f：壁切れをどこまで救うかの距離）、ここではf_NowDistをクリアしてはいけない。
+		st_data.f_dist			= f_NowDist + 90.0f;		// 等速完了位置（90.0f：壁切れをどこまで救うかの距離）、ここではf_NowDistをクリアしてはいけない。
 		st_data.f_accAngleS		= 0;						// 角加速度
 		st_data.f_nowAngleS		= 0;						// 現在角速度
 		st_data.f_trgtAngleS	= 0;						// 目標角度
@@ -3894,18 +3897,18 @@ PUBLIC BOOL SYS_isOutOfCtrl( void )
 // 		v1.0		2019.05.01		翔	新規
 // *************************************************************************/
 PRIVATE void log_in2( 	FLOAT log1,FLOAT log2,
-			FLOAT log3,FLOAT log4,
+			FLOAT log3,FLOAT log4)/*,
 			FLOAT log5,FLOAT log6,
 			FLOAT log7,FLOAT log8,
 			FLOAT log9,FLOAT log10,
-			FLOAT log11,FLOAT log12)
+			FLOAT log11,FLOAT log12)*/
 {
 	if((b_logflag == TRUE)&&(log_count < log_num)){
 		Log_1[log_count] = log1;
 		Log_2[log_count] = log2;
 		Log_3[log_count] = log3;
 		Log_4[log_count] = log4;
-		Log_5[log_count] = log5;
+/*		Log_5[log_count] = log5;
 		Log_6[log_count] = log6;
 		Log_7[log_count] = log7;
 		Log_8[log_count] = log8;
@@ -3913,7 +3916,7 @@ PRIVATE void log_in2( 	FLOAT log1,FLOAT log2,
 		Log_10[log_count] = log10;
 		Log_11[log_count] = log11;
 		Log_12[log_count] = log12;
-		
+*/		
 		log_count++;
 	}
 }
@@ -3929,17 +3932,22 @@ PRIVATE void log_in2( 	FLOAT log1,FLOAT log2,
 // *************************************************************************/
 PUBLIC void log_interrupt ( void )
 {
-/*	log_in2(GYRO_getSpeedErr(), f_TrgtAngleS,
-		f_NowAngle,f_TrgtAngle);
-*/
+//	log_in2(GYRO_getSpeedErr(), f_TrgtAngleS,
+//		f_NowAngle,f_TrgtAngle);
 
 	log_in2(f_NowSpeed, f_TrgtSpeed,
+		f_NowDist, f_TrgtDist);
+
+/*	log_in2(DIST_getNowVal( DIST_SEN_R_FRONT ), DIST_getNowVal( DIST_SEN_L_FRONT ),
+		DIST_getNowVal( DIST_SEN_R_SIDE ), DIST_getNowVal( DIST_SEN_L_SIDE ));
+*/
+/*	log_in2(f_NowSpeed, f_TrgtSpeed,
 		f_NowDist, f_TrgtDist,
 		GYRO_getSpeedErr(), f_TrgtAngleS,
 		f_NowAngle,f_TrgtAngle,
 		f_AccAngleS,templog1,
 		templog2,f_Duty_R);
-
+*/
 /*	log_in2(DIST_getNowVal( DIST_SEN_R_FRONT ), DIST_getNowVal( DIST_SEN_L_FRONT ),
 		DIST_getNowVal( DIST_SEN_R_SIDE ), DIST_getNowVal( DIST_SEN_L_SIDE ),
 		GYRO_getSpeedErr(), f_TrgtAngleS,
@@ -3989,16 +3997,16 @@ PUBLIC void log_flag_off(void)
 PUBLIC void log_read2(void)
 {
 	int i=0;
-	while(i<log_num){
+/*	while(i<log_num){
 		printf("%5.2f,%5.2f,%5.2f,%5.2f,%5.2f,%5.2f,%5.2f,%5.2f,%5.2f,%5.2f,%5.2f,%5.2f\n\r",
 		Log_1[i],Log_2[i],Log_3[i],Log_4[i],Log_5[i],Log_6[i],Log_7[i],Log_8[i],Log_9[i],Log_10[i],Log_11[i],Log_12[i]);
 		i++;
 	}
-
-/*	while(i<log_num){
+*/
+	while(i<log_num){
 		printf("%5.2f,%5.2f,%5.2f,%5.2f\n\r",
 		Log_1[i],Log_2[i],Log_3[i],Log_4[i]);
 		i++;
 	}
-*/
+
 }

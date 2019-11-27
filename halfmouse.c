@@ -468,7 +468,7 @@ PRIVATE void MODE_exe( void )
 			if (( SW_ON == SW_INC_PIN )||(SYS_isOutOfCtrl() == TRUE))break;
 			map_write();
 			/* 帰りのスラローム探索 */
-			TIME_wait(1000);
+//			TIME_wait(1000);
 			LED = LED_ALL_OFF;
 			MAP_Goalsize(1);
 			log_flag_on();
@@ -477,7 +477,7 @@ PRIVATE void MODE_exe( void )
 
 			log_flag_off();
 
-			TIME_wait(1000);
+//			TIME_wait(1000);
 			if (( SW_ON == SW_INC_PIN )||(SYS_isOutOfCtrl() == TRUE))break;
 			map_write();
 //			PARAM_setCntType( TRUE );								// 最短走行
@@ -514,7 +514,7 @@ PRIVATE void MODE_exe( void )
 			map_write();
 			}
 			/* 帰りのスラローム探索 */
-			TIME_wait(1000);
+//			TIME_wait(1000);
 			LED = LED_ALL_OFF;
 
 //			log_flag_on();
@@ -523,7 +523,7 @@ PRIVATE void MODE_exe( void )
 
 //			log_flag_off();
 
-			TIME_wait(1000);
+//			TIME_wait(1000);
 			if (( SW_ON == SW_INC_PIN )||(SYS_isOutOfCtrl() == TRUE)){}
 			else{
 			map_write();
@@ -598,7 +598,7 @@ PRIVATE void MODE_exe( void )
 			LED = LED_ALL_ON;
 			TIME_wait(1000);
 
-			MOT_setTrgtSpeed(SEARCH_SPEED*2);
+			MOT_setTrgtSpeed(SEARCH_SPEED*1.5);
 			MOT_setSuraStaSpeed( (FLOAT)SEARCH_SPEED );							// スラローム開始速度設定
 			PARAM_setSpeedType( PARAM_ST,   PARAM_SLOW );							// [直進] 速度普通
 			PARAM_setSpeedType( PARAM_TRUN, PARAM_SLOW );							// [旋回] 速度普通
@@ -607,6 +607,7 @@ PRIVATE void MODE_exe( void )
 			Failsafe_flag_off();
 			
 			MAP_setPos( 0, 0, NORTH );												// スタート位置
+			MAP_Goalsize(Goalsize);
 			MAP_makeContourMap( GOAL_MAP_X, GOAL_MAP_Y, BEST_WAY );					// 等高線マップを作る
 			MAP_makeCmdList( 0, 0, NORTH, GOAL_MAP_X, GOAL_MAP_Y, &en_endDir );		// ドライブコマンド作成
 			MAP_makeSuraCmdList();													// スラロームコマンド作成
@@ -666,7 +667,7 @@ PRIVATE void MODE_exe( void )
 			if (( SW_ON == SW_INC_PIN )||(SYS_isOutOfCtrl() == TRUE))break;
 			map_write();
 			/* 帰りのスラローム探索 */
-			TIME_wait(1000);
+//			TIME_wait(1000);
 			LED = LED_ALL_OFF;
 			MAP_Goalsize(1);
 			log_flag_on();
@@ -675,7 +676,7 @@ PRIVATE void MODE_exe( void )
 
 			log_flag_off();
 
-			TIME_wait(1000);
+//			TIME_wait(1000);
 			if (( SW_ON == SW_INC_PIN )||(SYS_isOutOfCtrl() == TRUE))break;
 			map_write();
 //			PARAM_setCntType( TRUE );								// 最短走行
