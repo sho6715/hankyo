@@ -47,7 +47,7 @@
 
 /* 調整パラメータ */
 #define VCC_MAX						( 4.2f )									// バッテリ最大電圧[V]、4.2[V]×1[セル]
-#define TIRE_R						( 12.65f )	//推定値								// タイヤ直径 [mm]
+#define TIRE_R						( 12.7f )	//推定値								// タイヤ直径 [mm]
 //#define GEAR_RATIO					( 36 / 9 )									// ギア比(スパー/ピニオン)
 #define ROTATE_PULSE				( 65536 )									// 1周の最大数値
 #define DIST_1STEP					( PI * TIRE_R / ROTATE_PULSE )				// 1パルスで進む距離 [mm]
@@ -1003,6 +1003,9 @@ PUBLIC void ENC_GetDiv( LONG* p_r, LONG* p_l )
 		if(cntR_dif<-32768){
 			cntR = cntR_dif + 65536;
 		}
+		else if (cntR_dif>32768){
+			cntR = cntR_dif - 65536;
+		}
 		else{
 			cntR = cntR_dif;
 		}
@@ -1010,6 +1013,9 @@ PUBLIC void ENC_GetDiv( LONG* p_r, LONG* p_l )
 	else{
 		if(cntR_dif>32768){
 			cntR = cntR_dif - 65536;
+		}
+		else if(cntR_dif<-32768){
+			cntR = cntR_dif + 65536;
 		}
 		else{
 			cntR = cntR_dif;
@@ -1021,6 +1027,9 @@ PUBLIC void ENC_GetDiv( LONG* p_r, LONG* p_l )
 		if(cntL_dif<-32768){
 			cntL = cntL_dif + 65536;
 		}
+		else if (cntL_dif >32768){
+			cntL = cntL_dif -65536;
+		}
 		else{
 			cntL = cntL_dif;
 		}
@@ -1028,6 +1037,9 @@ PUBLIC void ENC_GetDiv( LONG* p_r, LONG* p_l )
 	else{
 		if(cntL_dif>32768){
 			cntL = cntL_dif - 65536;
+		}
+		else if(cntL_dif<-32768){
+			cntL = cntL_dif + 65536;
 		}
 		else{
 			cntL = cntL_dif;
@@ -1310,6 +1322,7 @@ PUBLIC void CTRL_clrData( void )
 //	recv_spi_encoder();								// エンコーダモジュール初期化
 //	ENC_R_CNT_old	= ENC_R_CNT;
 //	ENC_L_CNT_old	= ENC_L_CNT;
+//	ENC_setref();
 	l_CntR			= 0;						// カウンタクリア
 	l_CntL			= 0;						// カウンタクリア
 	
@@ -3052,7 +3065,6 @@ PUBLIC void MOT_turn( enMOT_TURN_CMD en_type )
 	FLOAT		us_trgtAngleS;	//目標角度[rad/s]
 	
 	us_trgtAngleS = 500;
-	
 	/* ---------------- */
 	/*  動作データ計算  */
 	/* ---------------- */
@@ -3260,7 +3272,6 @@ PUBLIC void MOT_turn( enMOT_TURN_CMD en_type )
 		}
 	}
 //	printf("finish3\n");
-
 	/* 停止 */
 	TIME_wait(200);				// 安定待ち
 	CTRL_stop();			// 制御停止
