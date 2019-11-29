@@ -734,6 +734,159 @@ PUBLIC void  MAP_makeContourMap_run(
 }
 
 // *************************************************************************
+//   機能		： 等高線マップを作成する 改良検討
+//   注意		： なし
+//   メモ		： 探索のマップ作成の軽量化を目的として作成（検証不十分）
+//   引数		： なし
+//   返り値		： なし
+// **************************    履    歴    *******************************
+// 		v1.0		2019.11.29			sato		新規
+// *************************************************************************/
+PUBLIC void  MAP_makeContourMap_kai(
+	UCHAR uc_goalX, 			///< [in] ゴールX座標
+	UCHAR uc_goalY, 			///< [in] ゴールY座標
+	enMAP_ACT_MODE	en_type		///< [in] 計算方法（まだ未使用）
+) {
+	USHORT		x, y, i;		// ループ変数
+	USHORT		uc_dase;		// 基準値
+	USHORT		uc_new;			// 新値
+	USHORT		uc_level;		// 等高線
+	UCHAR		uc_wallData;	// 壁情報
+	USHORT		uc_maplevel;
+
+	en_type = en_type;		// コンパイルワーニング回避（いずれ削除）
+
+	uc_maplevel = us_cmap[my][mx];
+
+	/* 等高線マップを初期化する */
+	if ((mx == 0) && (my == 0)) {
+		for (i = 0; i < MAP_SMAP_MAX_VAL; i++) {
+			us_cmap[i / MAP_Y_SIZE][i & (MAP_X_SIZE - 1)] = MAP_SMAP_MAX_VAL - 1;
+		}
+	}
+	else {
+		for (i = 0; i < MAP_SMAP_MAX_VAL; i++) {
+			if ((us_cmap[i / MAP_Y_SIZE][i & (MAP_X_SIZE - 1)] > uc_maplevel-2)) {
+				us_cmap[i / MAP_Y_SIZE][i & (MAP_X_SIZE - 1)] = MAP_SMAP_MAX_VAL - 1;
+			}
+
+		}
+	}
+	
+	/* 目標地点の等高線を0に設定 */
+	us_cmap[uc_goalY][uc_goalX] = 0;
+	if (GOAL_SIZE == 4) {
+		us_cmap[uc_goalY + 1][uc_goalX] = 0;
+		us_cmap[uc_goalY][uc_goalX + 1] = 0;
+		us_cmap[uc_goalY + 1][uc_goalX + 1] = 0;
+	}
+	else if (GOAL_SIZE == 9) {
+		us_cmap[uc_goalY + 1][uc_goalX] = 0;
+		us_cmap[uc_goalY][uc_goalX + 1] = 0;
+		us_cmap[uc_goalY + 1][uc_goalX + 1] = 0;
+		us_cmap[uc_goalY + 2][uc_goalX] = 0;
+		us_cmap[uc_goalY + 2][uc_goalX + 1] = 0;
+		us_cmap[uc_goalY][uc_goalX + 2] = 0;
+		us_cmap[uc_goalY + 1][uc_goalX + 2] = 0;
+		us_cmap[uc_goalY + 2][uc_goalX + 2] = 0;
+	}
+
+	if (mx > uc_max_x)uc_max_x = mx;
+	if (my > uc_max_y)uc_max_y = my;
+
+	/* 等高線マップを作成 */
+	if ((uc_maplevel == MAP_SMAP_MAX_VAL - 1)||(uc_maplevel<2)) {
+		uc_dase = 0;
+	}
+	else {
+		uc_dase = uc_maplevel-2;
+	}
+	do {
+		uc_level = 0;
+		uc_new = uc_dase + 1;
+		for (y = 0; y < MAP_Y_SIZE; y++) {
+			if (uc_max_y + 1 < y) break;
+			for (x = 0; x < MAP_X_SIZE; x++) {
+				if (us_cmap[y][x] == uc_dase) {
+					uc_wallData = g_sysMap[y][x];
+					if (uc_max_x + 1 < x) break;
+					/* 探索走行 */
+					if (SEARCH == en_type) {
+						if (((uc_wallData & 0x01) == 0x00) && (y != (MAP_Y_SIZE - 1))) {
+							if (us_cmap[y + 1][x] == MAP_SMAP_MAX_VAL - 1) {
+								us_cmap[y + 1][x] = uc_new;
+								uc_level++;
+							}
+						}
+						if (((uc_wallData & 0x02) == 0x00) && (x != (MAP_X_SIZE - 1))) {
+							if (us_cmap[y][x + 1] == MAP_SMAP_MAX_VAL - 1) {
+								us_cmap[y][x + 1] = uc_new;
+								uc_level++;
+							}
+						}
+						if (((uc_wallData & 0x04) == 0x00) && (y != 0)) {
+							if (us_cmap[y - 1][x] == MAP_SMAP_MAX_VAL - 1) {
+								us_cmap[y - 1][x] = uc_new;
+								uc_level++;
+							}
+						}
+						if (((uc_wallData & 0x08) == 0x00) && (x != 0)) {
+							if (us_cmap[y][x - 1] == MAP_SMAP_MAX_VAL - 1) {
+								us_cmap[y][x - 1] = uc_new;
+								uc_level++;
+							}
+						}
+					}
+					/* 最短走行 */
+					else {
+						if (((uc_wallData & 0x11) == 0x10) && (y != (MAP_Y_SIZE - 1))) {
+							if (us_cmap[y + 1][x] == MAP_SMAP_MAX_VAL - 1) {
+								us_cmap[y + 1][x] = uc_new;
+								uc_level++;
+							}
+						}
+						if (((uc_wallData & 0x22) == 0x20) && (x != (MAP_X_SIZE - 1))) {
+							if (us_cmap[y][x + 1] == MAP_SMAP_MAX_VAL - 1) {
+								us_cmap[y][x + 1] = uc_new;
+								uc_level++;
+							}
+						}
+						if (((uc_wallData & 0x44) == 0x40) && (y != 0)) {
+							if (us_cmap[y - 1][x] == MAP_SMAP_MAX_VAL - 1) {
+								us_cmap[y - 1][x] = uc_new;
+								uc_level++;
+							}
+						}
+						if (((uc_wallData & 0x88) == 0x80) && (x != 0)) {
+							if (us_cmap[y][x - 1] == MAP_SMAP_MAX_VAL - 1) {
+								us_cmap[y][x - 1] = uc_new;
+								uc_level++;
+							}
+						}
+					}
+					if ((x == mx) && (y == my))	break;
+				}
+			}
+			if ((x == mx) && (y == my))break;
+		}
+		if ((x == mx) && (y == my)) break;
+		uc_dase = uc_dase + 1;
+	} while (uc_level != 0);
+
+#if 0
+	/* debug */
+	for (x = 0; x < 4; x++) {
+
+		for (y = 0; y < 4; y++) {
+			us_Log[y][x][us_LogPt] = us_cmap[y][x];
+		}
+	}
+	us_LogPt++;
+#endif
+
+}
+
+// *************************************************************************
 //   機能		： マウスの進行方向を決定する
 //   注意		： なし
 //   メモ		： なし
