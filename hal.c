@@ -3504,7 +3504,8 @@ PUBLIC void MOT_goSla( enMOT_SURA_CMD en_type, stSLA* p_sla )
 	CTRL_setData( &st_data );							// データセット
 	DCM_staMotAll();									// モータON
 
-	while( f_NowDist < f_entryLen ){				// 指定距離到達待ち
+	while( f_NowDist < f_entryLen + 10 ){				// 指定距離到達待ち
+		if((DIST_getNowVal( DIST_SEN_R_FRONT )>100)&&(DIST_getNowVal( DIST_SEN_L_FRONT )>90))break;
 		if( SYS_isOutOfCtrl() == TRUE ){
 			CTRL_stop(); 
 			DCM_brakeMot( DCM_R );		// ブレーキ
