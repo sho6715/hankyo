@@ -260,6 +260,7 @@ PRIVATE void MODE_inc( void )
 // *************************************************************************/
 PRIVATE void MODE_exe0( void )
 {
+	enMAP_HEAD_DIR		en_endDir2;
 	/* モード表示 */
 	switch( en_Mode ){
 	
@@ -317,11 +318,21 @@ PRIVATE void MODE_exe0( void )
 
 		case MODE_5:
 			LED = LED_ALL_ON;
+			map_copy();
 			MAP_showLog();
 			break;
 
 		case MODE_6:
 			LED = LED_ALL_ON;
+			map_copy();
+			MAP_Goalsize(1);
+			MAP_setPos( 0, 0, NORTH );								// スタート位置
+			MAP_makeContourMap_run( GOAL_MAP_X, GOAL_MAP_Y, BEST_WAY );					// 等高線マップを作る
+			MAP_showcountLog();
+			MAP_makeCmdList( 0, 0, NORTH, GOAL_MAP_X, GOAL_MAP_Y, &en_endDir2 );		// ドライブコマンド作成
+			MAP_makeSuraCmdList();													// スラロームコマンド作成
+			MAP_makeSkewCmdList();
+			MAP_showCmdLog();
 			break;
 
 		case MODE_7:
@@ -482,7 +493,7 @@ PRIVATE void MODE_exe( void )
 			map_write();
 //			PARAM_setCntType( TRUE );								// 最短走行
 			MAP_setPos( 0, 0, NORTH );								// スタート位置
-			MAP_makeContourMap( GOAL_MAP_X, GOAL_MAP_Y, BEST_WAY );					// 等高線マップを作る
+			MAP_makeContourMap_run( GOAL_MAP_X, GOAL_MAP_Y, BEST_WAY );					// 等高線マップを作る
 			MAP_makeCmdList( 0, 0, NORTH, GOAL_MAP_X, GOAL_MAP_Y, &en_endDir );		// ドライブコマンド作成
 			MAP_makeSuraCmdList();													// スラロームコマンド作成
 			MAP_makeSkewCmdList();
@@ -499,7 +510,8 @@ PRIVATE void MODE_exe( void )
 			LED = LED_ALL_OFF;
 			TIME_wait(100);
 			PARAM_makeSra( (FLOAT)SEARCH_SPEED, 200.0f, 2500.0f, SLA_90 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ
-			MAP_Goalsize(Goalsize);
+//			MAP_Goalsize(Goalsize);
+			MAP_Goalsize(1);
 			MAP_setPos( 0, 0, NORTH );							// スタート位置
 
 			log_flag_on();
@@ -529,7 +541,7 @@ PRIVATE void MODE_exe( void )
 			map_write();
 //			PARAM_setCntType( TRUE );								// 最短走行
 			MAP_setPos( 0, 0, NORTH );								// スタート位置
-			MAP_makeContourMap( GOAL_MAP_X, GOAL_MAP_Y, BEST_WAY );					// 等高線マップを作る
+			MAP_makeContourMap_run( GOAL_MAP_X, GOAL_MAP_Y, BEST_WAY );					// 等高線マップを作る
 			MAP_makeCmdList( 0, 0, NORTH, GOAL_MAP_X, GOAL_MAP_Y, &en_endDir );		// ドライブコマンド作成
 			MAP_makeSuraCmdList();													// スラロームコマンド作成
 			MAP_makeSkewCmdList();
@@ -570,7 +582,7 @@ PRIVATE void MODE_exe( void )
 			LED = LED_ALL_OFF;
 			TIME_wait(100);
 			log_flag_on();
-			MOT_goBlock_FinSpeed( 7.0, 0 );
+			MOT_goBlock_FinSpeed( 31.0, 0 );
 			log_flag_off();
 			
 			break;
@@ -607,8 +619,8 @@ PRIVATE void MODE_exe( void )
 			Failsafe_flag_off();
 			
 			MAP_setPos( 0, 0, NORTH );												// スタート位置
-			MAP_Goalsize(Goalsize);
-			MAP_makeContourMap( GOAL_MAP_X, GOAL_MAP_Y, BEST_WAY );					// 等高線マップを作る
+			MAP_Goalsize(1);
+			MAP_makeContourMap_run( GOAL_MAP_X, GOAL_MAP_Y, BEST_WAY );					// 等高線マップを作る
 			MAP_makeCmdList( 0, 0, NORTH, GOAL_MAP_X, GOAL_MAP_Y, &en_endDir );		// ドライブコマンド作成
 			MAP_makeSuraCmdList();													// スラロームコマンド作成
 			MAP_makeSkewCmdList();													// 斜めコマンド作成
@@ -654,7 +666,7 @@ PRIVATE void MODE_exe( void )
 			LED = LED_ALL_OFF;
 			TIME_wait(100);
 			PARAM_makeSra( (FLOAT)SEARCH_SPEED, 200.0f, 2500.0f, SLA_90 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ
-			MAP_Goalsize(Goalsize);
+			MAP_Goalsize(1);
 			MAP_setPos( 0, 0, NORTH );							// スタート位置
 
 			log_flag_on();

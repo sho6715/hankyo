@@ -33,7 +33,7 @@
 #define DEG_TO_RAD  (3.1416f/180.0f)
 #define RAD_TO_DEG  (180.0f/3.1416f)
 
-#define MOT_WALL_EDGE_DIST			( 30.0f )	// 壁切れセンサOFF～壁まで
+#define MOT_WALL_EDGE_DIST			( 28.0f )	// 壁切れセンサOFF～壁まで
 
 //**************************************************
 // 列挙体（enum）

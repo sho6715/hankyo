@@ -66,7 +66,7 @@
 #define ANGLE_OFFSET2				( 0 )						// 角度のオフセット値（バッファリングによる誤差を埋めるための値）
 #define ANGLE_OFFSET3				( 0 )					// 角度のオフセット値（バッファリングによる誤差を埋めるための値）
 
-#define log_num			(1000)					//ログ取得数（変更時はこちらを変更）
+#define log_num			(200)					//ログ取得数（変更時はこちらを変更）
 
 //**************************************************
 // 列挙体（enum）
@@ -3912,7 +3912,8 @@ PRIVATE void log_in2( 	FLOAT log1,FLOAT log2,
 			FLOAT log5,FLOAT log6,
 			FLOAT log7,FLOAT log8,
 			FLOAT log9,FLOAT log10,
-			FLOAT log11,FLOAT log12)*/
+			FLOAT log11,FLOAT log12)
+*/
 {
 	if((b_logflag == TRUE)&&(log_count < log_num)){
 		Log_1[log_count] = log1;
@@ -3946,12 +3947,12 @@ PUBLIC void log_interrupt ( void )
 //	log_in2(GYRO_getSpeedErr(), f_TrgtAngleS,
 //		f_NowAngle,f_TrgtAngle);
 
-	log_in2(f_NowSpeed, f_TrgtSpeed,
-		f_NowDist, f_TrgtDist);
+//	log_in2(f_NowSpeed, f_TrgtSpeed,
+//		f_NowDist, f_TrgtDist);
 
-/*	log_in2(DIST_getNowVal( DIST_SEN_R_FRONT ), DIST_getNowVal( DIST_SEN_L_FRONT ),
+	log_in2(DIST_getNowVal( DIST_SEN_R_FRONT ), DIST_getNowVal( DIST_SEN_L_FRONT ),
 		DIST_getNowVal( DIST_SEN_R_SIDE ), DIST_getNowVal( DIST_SEN_L_SIDE ));
-*/
+
 /*	log_in2(f_NowSpeed, f_TrgtSpeed,
 		f_NowDist, f_TrgtDist,
 		GYRO_getSpeedErr(), f_TrgtAngleS,

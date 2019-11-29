@@ -1,4 +1,4 @@
-Renesas Optimizing Linker (W2.08.00 )             28-Nov-2019 22:40:14
+Renesas Optimizing Linker (W2.08.00 )             29-Nov-2019 19:04:20
 
 *** Options ***
 
@@ -38,19 +38,19 @@ SECTION                            START      END         SIZE   ALIGN
 B_1
                                   00000004  00003436      3433   1
 R_1
-                                  00003437  00003491        5b   1
+                                  00003437  00003492        5c   1
 B_2
-                                  00003492  00003ce7       856   2
+                                  00003494  00003ce9       856   2
 R_2
-                                  00003ce8  00003d07        20   2
+                                  00003cea  00003d09        20   2
 B
-                                  00003d08  000080fb      43f4   4
+                                  00003d0c  00004eff      11f4   4
 R
-                                  000080fc  00008443       348   4
+                                  00004f00  00005247       348   4
 SU
-                                  00008444  00008543       100   4
+                                  00005248  00005347       100   4
 SI
-                                  00008544  00008843       300   4
+                                  00005348  00005647       300   4
 PResetPRG
                                   fff80000  fff80034        35   1
 C_1
@@ -70,23 +70,23 @@ C$VTBL
 C$VECT
                                   fff81f38  fff82337       400   4
 D_1
-                                  fff82338  fff82392        5b   1
+                                  fff82338  fff82393        5c   1
 D_2
                                   fff82394  fff823b3        20   2
 D
                                   fff823b4  fff826fb       348   4
 P
-                                  fff826fc  fff8aa23      8328   1
+                                  fff826fc  fff8ac21      8526   1
 PIntPRG
-                                  fff8aa24  fff8abe9       1c6   1
+                                  fff8ac22  fff8ade7       1c6   1
 W_1
-                                  fff8abea  fff8ac36        4d   1
+                                  fff8ade8  fff8ae34        4d   1
 W_2
-                                  fff8ac38  fff8ac95        5e   2
+                                  fff8ae36  fff8ae93        5e   2
 W
-                                  fff8ac98  fff8ac98         0   4
+                                  fff8ae94  fff8ae94         0   4
 L
-                                  fff8ac98  fff8b198       501   4
+                                  fff8ae94  fff8b394       501   4
 $ADDR_C_FFFFFF80
                                   ffffff80  ffffff83         4   1
 $ADDR_C_FFFFFFA0

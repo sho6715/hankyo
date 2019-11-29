@@ -23,8 +23,8 @@
 // 定義（define）
 //**************************************************
 /* 迷路サイズ */
-#define GOAL_MAP_X_def					( 6 )				// ゴールのX区画数（横方向） [区画]
-#define GOAL_MAP_Y_def					( 9 )				// ゴールのY区画数（縦方向） [区画]
+#define GOAL_MAP_X_def					( 5 )				// ゴールのX区画数（横方向） [区画]
+#define GOAL_MAP_Y_def					( 23 )				// ゴールのY区画数（縦方向） [区画]
 #define MAP_X_SIZE					( 32 )				// 迷路のX区画数（横方向） [区画]
 #define MAP_Y_SIZE					( 32 )				// 迷路のY区画数（縦方向） [区画]
 
@@ -95,6 +95,7 @@ PUBLIC void MAP_clearMap( void );
 PUBLIC void MAP_setPos( UCHAR uc_x, UCHAR uc_y, enMAP_HEAD_DIR en_dir );
 PUBLIC void MAP_searchGoal( UCHAR uc_trgX, UCHAR uc_trgY, enMAP_ACT_MODE en_type, enSEARCH_MODE en_search );
 PUBLIC void MAP_makeContourMap( UCHAR uc_goalX, UCHAR uc_goalY, enMAP_ACT_MODE en_type );
+PUBLIC void MAP_makeContourMap_run( UCHAR uc_goalX,UCHAR uc_goalY,	enMAP_ACT_MODE	en_type);
 PUBLIC void MAP_actGoalLED( void );
 
 PUBLIC void MAP_ClearMapData( void );
