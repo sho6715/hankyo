@@ -1108,6 +1108,16 @@ PRIVATE void MAP_moveNextBlock_Sura(
 
 		// 右にスラロームする
 		case EAST:
+			if( ( ( en_Head == NORTH ) && ( ( g_sysMap[my][mx] & 0x02 ) != 0 ) )  ||		// 北を向いていて東に壁がある
+					( ( en_Head == EAST  ) && ( ( g_sysMap[my][mx] & 0x04 ) != 0 ) )  ||		// 東を向いていて南に壁がある
+					( ( en_Head == SOUTH ) && ( ( g_sysMap[my][mx] & 0x08 ) != 0 ) )  ||		// 南を向いていて西に壁がある
+					( ( en_Head == WEST  ) && ( ( g_sysMap[my][mx] & 0x01 ) != 0 ) ) 			// 西を向いていて北に壁がある
+				){
+				uc_dist_control = 10;
+				}
+			else{
+				uc_dist_control = 0;
+			}
 			if( uc_SlaCnt < SLA_count ){
 				MOT_goSla( MOT_R90S, PARAM_getSra( SLA_90 ) );	// 右スラローム
 				uc_SlaCnt++;
@@ -1138,6 +1148,16 @@ PRIVATE void MAP_moveNextBlock_Sura(
 
 		// 左にスラロームする
 		case WEST:
+			if( ( ( en_Head == NORTH ) && ( ( g_sysMap[my][mx] & 0x08 ) != 0 ) )  ||		// 北を向いていて西に壁がある
+					( ( en_Head == EAST  ) && ( ( g_sysMap[my][mx] & 0x01 ) != 0 ) )  ||		// 東を向いていて北に壁がある
+					( ( en_Head == SOUTH ) && ( ( g_sysMap[my][mx] & 0x02 ) != 0 ) )  ||		// 南を向いていて東に壁がある
+					( ( en_Head == WEST  ) && ( ( g_sysMap[my][mx] & 0x04 ) != 0 ) ) 			// 西を向いていて南に壁がある
+				){
+				uc_dist_control = 10;
+				}
+			else{
+				uc_dist_control = 0;
+			}
 			if( uc_SlaCnt < SLA_count ){
 				MOT_goSla( MOT_L90S, PARAM_getSra( SLA_90 ) );	// 左スラローム
 				uc_SlaCnt++;
@@ -1497,7 +1517,16 @@ PRIVATE void MAP_moveNextBlock_acc(enMAP_HEAD_DIR en_head, BOOL* p_type)
 			st_known.uc_StrCnt = 0;		/////////////////////////////////////////
 			st_known.bl_Known = FALSE;
 		}
-
+		if( ( ( en_Head == NORTH ) && ( ( g_sysMap[my][mx] & 0x02 ) != 0 ) )  ||		// 北を向いていて東に壁がある
+					( ( en_Head == EAST  ) && ( ( g_sysMap[my][mx] & 0x04 ) != 0 ) )  ||		// 東を向いていて南に壁がある
+					( ( en_Head == SOUTH ) && ( ( g_sysMap[my][mx] & 0x08 ) != 0 ) )  ||		// 南を向いていて西に壁がある
+					( ( en_Head == WEST  ) && ( ( g_sysMap[my][mx] & 0x01 ) != 0 ) ) 			// 西を向いていて北に壁がある
+			){
+			uc_dist_control = 10;
+			}
+		else{
+			uc_dist_control = 0;
+		}
 		if( uc_SlaCnt < SLA_count ){
 				MOT_goSla( MOT_R90S, PARAM_getSra( SLA_90 ) );	// 右スラローム
 				uc_SlaCnt++;
@@ -1529,7 +1558,16 @@ PRIVATE void MAP_moveNextBlock_acc(enMAP_HEAD_DIR en_head, BOOL* p_type)
 
 		/* 左に旋回する */
 	case WEST:
-//		LED = LED1;
+		if( ( ( en_Head == NORTH ) && ( ( g_sysMap[my][mx] & 0x08 ) != 0 ) )  ||		// 北を向いていて西に壁がある
+					( ( en_Head == EAST  ) && ( ( g_sysMap[my][mx] & 0x01 ) != 0 ) )  ||		// 東を向いていて北に壁がある
+					( ( en_Head == SOUTH ) && ( ( g_sysMap[my][mx] & 0x02 ) != 0 ) )  ||		// 南を向いていて東に壁がある
+					( ( en_Head == WEST  ) && ( ( g_sysMap[my][mx] & 0x04 ) != 0 ) ) 			// 西を向いていて南に壁がある
+			){
+			uc_dist_control = 10;
+			}
+		else{
+			uc_dist_control = 0;
+		}
 		if (st_known.bl_Known == TRUE) {		// 直線分を消化
 			if (st_known.uc_StrCnt < 2) {
 				MOT_goBlock_Const(1);					// 1区画の場合は等速のまま

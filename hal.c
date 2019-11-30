@@ -280,6 +280,8 @@ PRIVATE	FLOAT	f_Duty_L;
 //抜け出し用タイム
 PRIVATE FLOAT	straight_wait;
 
+PUBLIC UCHAR	uc_dist_control;
+
 PRIVATE CHAR	i;
 
 //**************************************************
@@ -3504,7 +3506,7 @@ PUBLIC void MOT_goSla( enMOT_SURA_CMD en_type, stSLA* p_sla )
 	CTRL_setData( &st_data );							// データセット
 	DCM_staMotAll();									// モータON
 
-	while( f_NowDist < f_entryLen + 10 ){				// 指定距離到達待ち
+	while( f_NowDist < f_entryLen + uc_dist_control ){				// 指定距離到達待ち
 		if((DIST_getNowVal( DIST_SEN_R_FRONT )>100)&&(DIST_getNowVal( DIST_SEN_L_FRONT )>90))break;
 		if( SYS_isOutOfCtrl() == TRUE ){
 			CTRL_stop(); 
@@ -3664,7 +3666,7 @@ PUBLIC void MOT_goSla( enMOT_SURA_CMD en_type, stSLA* p_sla )
 //	LED_off(LED1);
 //	log_in(f_NowAngle);
 	f_MotNowSpeed = st_info.f_now;			// 現在速度更新
-
+//	LED =LED_ALL_OFF;
 	GYRO_endErrChkAngle();					// エラー検出終了
 
 }
