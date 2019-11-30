@@ -67,8 +67,7 @@ PRIVATE UCHAR		uc_max_y = GOAL_MAP_Y_def;
 
 //TKR
 /* 既知区間加速 */
-typedef struct
-{
+typedef struct{
 	UCHAR	uc_StrCnt;
 	BOOL	bl_Known;
 }stMAP_KNOWN;
@@ -324,7 +323,7 @@ PUBLIC void MAP_showLog( void )
 PUBLIC void MAP_showcountLog(void)
 {
 	SHORT	x, y;
-	CHAR	c_data;
+	USHORT	c_data;
 
 	/* ---------- */
 	/*  等高線迷路  */
@@ -478,9 +477,9 @@ PUBLIC void  MAP_makeContourMap(
 	enMAP_ACT_MODE	en_type		///< [in] 計算方法（まだ未使用）
 ){
 	USHORT		x, y, i;		// ループ変数
-	UCHAR		uc_dase;		// 基準値
-	UCHAR		uc_new;			// 新値
-	UCHAR		uc_level;		// 等高線
+	USHORT		uc_dase;		// 基準値
+	USHORT		uc_new;			// 新値
+	USHORT		uc_level;		// 等高線
 	UCHAR		uc_wallData;	// 壁情報
 
 	en_type = en_type;		// コンパイルワーニング回避（いずれ削除）
@@ -613,9 +612,9 @@ PUBLIC void  MAP_makeContourMap_run(
 	enMAP_ACT_MODE	en_type		///< [in] 計算方法（まだ未使用）
 ){
 	USHORT		x, y, i;		// ループ変数
-	UCHAR		uc_dase;		// 基準値
-	UCHAR		uc_new;			// 新値
-	UCHAR		uc_level;		// 等高線
+	USHORT		uc_dase;		// 基準値
+	USHORT		uc_new;			// 新値
+	USHORT		uc_level;		// 等高線
 	UCHAR		uc_wallData;	// 壁情報
 
 	en_type = en_type;		// コンパイルワーニング回避（いずれ削除）
@@ -1311,9 +1310,9 @@ PUBLIC void MAP_Goalsize(int size)
 PUBLIC void  MAP_makeReturnContourMap(UCHAR uc_staX,UCHAR uc_staY) 
 {
 	USHORT		x, y, i;		// ループ変数
-	UCHAR		uc_dase;		// 基準値
-	UCHAR		uc_new;			// 新値
-	UCHAR		uc_level;		// 等高線
+	USHORT		uc_dase;		// 基準値
+	USHORT		uc_new;			// 新値
+	USHORT		uc_level;		// 等高線
 	UCHAR		uc_wallData;	// 壁情報
 
 	/* 等高線マップを初期化する */
