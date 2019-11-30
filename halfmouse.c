@@ -452,14 +452,10 @@ PRIVATE void MODE_exe( void )
 			LED = LED_ALL_OFF;
 			TIME_wait(100);
 			PARAM_makeSra( (FLOAT)SEARCH_SPEED, 200.0f, 2500.0f, SLA_90 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ
-			MAP_Goalsize(Goalsize);
+			MAP_Goalsize(1);
 			MAP_setPos( 0, 0, NORTH );							// スタート位置
 
-			log_flag_on();
-
 			MAP_searchGoalKnown( GOAL_MAP_X, GOAL_MAP_Y, SEARCH, SEARCH_SURA );			// ゴール設定
-
-			log_flag_off();
 
 //			POS_stop();			// debug
 			if (( SW_ON == SW_INC_PIN )||(SYS_isOutOfCtrl() == TRUE))break;
@@ -467,12 +463,10 @@ PRIVATE void MODE_exe( void )
 			/* 帰りのスラローム探索 */
 //			TIME_wait(1000);
 			LED = LED_ALL_OFF;
+			MOT_setTrgtSpeed(250);
 			MAP_Goalsize(1);
-			log_flag_on();
 
 			MAP_searchGoalKnown( 0, 0, SEARCH, SEARCH_SURA );
-
-			log_flag_off();
 
 //			TIME_wait(1000);
 			if (( SW_ON == SW_INC_PIN )||(SYS_isOutOfCtrl() == TRUE))break;
@@ -496,14 +490,10 @@ PRIVATE void MODE_exe( void )
 			LED = LED_ALL_OFF;
 			TIME_wait(100);
 			PARAM_makeSra( (FLOAT)SEARCH_SPEED, 200.0f, 2500.0f, SLA_90 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ
-			MAP_Goalsize(Goalsize);
+			MAP_Goalsize(1);
 			MAP_setPos( 0, 0, NORTH );							// スタート位置
 
-			log_flag_on();
-
 			MAP_searchGoal( GOAL_MAP_X, GOAL_MAP_Y, SEARCH, SEARCH_SURA );			// ゴール設定
-
-			log_flag_off();
 
 //			POS_stop();			// debug
 			if (( SW_ON == SW_INC_PIN )||(SYS_isOutOfCtrl() == TRUE))break;
@@ -511,12 +501,10 @@ PRIVATE void MODE_exe( void )
 			/* 帰りのスラローム探索 */
 //			TIME_wait(1000);
 			LED = LED_ALL_OFF;
+			MOT_setTrgtSpeed(250);
 			MAP_Goalsize(1);
-			log_flag_on();
 
 			MAP_searchGoal( 0, 0, SEARCH, SEARCH_SURA );
-
-			log_flag_off();
 
 //			TIME_wait(1000);
 			if (( SW_ON == SW_INC_PIN )||(SYS_isOutOfCtrl() == TRUE))break;
@@ -544,11 +532,7 @@ PRIVATE void MODE_exe( void )
 			MAP_Goalsize(1);
 			MAP_setPos( 0, 0, NORTH );							// スタート位置
 
-			log_flag_on();
-
 			MAP_searchGoalKnown( GOAL_MAP_X, GOAL_MAP_Y, SEARCH, SEARCH_SURA );			// ゴール設定
-
-			log_flag_off();
 
 //			POS_stop();			// debug
 			if (( SW_ON == SW_INC_PIN )||(SYS_isOutOfCtrl() == TRUE)){}
@@ -558,7 +542,7 @@ PRIVATE void MODE_exe( void )
 			/* 帰りのスラローム探索 */
 //			TIME_wait(1000);
 			LED = LED_ALL_OFF;
-
+			MOT_setTrgtSpeed(250);
 //			log_flag_on();
 			MAP_Goalsize(1);
 			MAP_searchGoalKnown( 0, 0, SEARCH, SEARCH_RETURN );
@@ -581,7 +565,33 @@ PRIVATE void MODE_exe( void )
 
 		case MODE_5:
 			LED = LED_ALL_ON;
-			log_read2();
+//			log_read2();
+
+			MOT_setTrgtSpeed(SEARCH_SPEED);
+			MOT_setSuraStaSpeed( (FLOAT)SEARCH_SPEED );							// スラローム開始速度設定
+			PARAM_setSpeedType( PARAM_ST,   PARAM_SLOW );							// [直進] 速度普通
+			PARAM_setSpeedType( PARAM_TRUN, PARAM_SLOW );							// [旋回] 速度普通
+			PARAM_setSpeedType( PARAM_SLA,  PARAM_SLOW );							// [スラ] 速度普通
+			LED = LED_ALL_OFF;
+			TIME_wait(100);
+			PARAM_makeSra( (FLOAT)SEARCH_SPEED, 200.0f, 2500.0f, SLA_90 );		// 進入速度[mm/s]、角加速度[rad/s^2]、横G[mm/s^2]、スラロームタイプ
+//			MAP_Goalsize(Goalsize);
+			MAP_Goalsize(1);
+			MAP_setPos( 0, 0, NORTH );							// スタート位置
+
+			MAP_searchGoalKnown( GOAL_MAP_X, GOAL_MAP_Y, SEARCH, SEARCH_SURA );			// ゴール設定
+
+//			POS_stop();			// debug
+			if (( SW_ON == SW_INC_PIN )||(SYS_isOutOfCtrl() == TRUE)){}
+			else{
+			map_write();
+			MAP_setPos( 0, 0, NORTH );								// スタート位置
+			MAP_makeContourMap_run( GOAL_MAP_X, GOAL_MAP_Y, BEST_WAY );					// 等高線マップを作る
+			MAP_makeCmdList( 0, 0, NORTH, GOAL_MAP_X, GOAL_MAP_Y, &en_endDir );		// ドライブコマンド作成
+			MAP_makeSuraCmdList();													// スラロームコマンド作成
+			MAP_makeSkewCmdList();
+			}
+			LED = LED_ALL_OFF;
 			break;
 
 		case MODE_6:
@@ -664,25 +674,26 @@ PRIVATE void MODE_exe( void )
 			
 		case MODE_10:
 			LED = LED_ALL_ON;
-			MOT_setTrgtSpeed(SEARCH_SPEED);
+			TIME_wait(1000);
+
+			MOT_setTrgtSpeed(SEARCH_SPEED*2);
 			MOT_setSuraStaSpeed( (FLOAT)SEARCH_SPEED );							// スラローム開始速度設定
 			PARAM_setSpeedType( PARAM_ST,   PARAM_SLOW );							// [直進] 速度普通
 			PARAM_setSpeedType( PARAM_TRUN, PARAM_SLOW );							// [旋回] 速度普通
 			PARAM_setSpeedType( PARAM_SLA,  PARAM_SLOW );							// [スラ] 速度普通
 			LED = LED_ALL_OFF;
 			Failsafe_flag_off();
-			MOT_goBlock_FinSpeed( 1.5, 300 );
-			for(i = 0;i<5;i++){
-				MOT_goSla(MOT_R90S,PARAM_getSra( SLA_90 ));
-				MOT_goBlock_Const( 1.0, 300 );
-				MOT_goSla(MOT_R90S,PARAM_getSra( SLA_90 ));
-				MOT_goBlock_Const( 1.0, 300 );
-				MOT_goSla(MOT_R90S,PARAM_getSra( SLA_90 ));
-				MOT_goBlock_Const( 1.0, 300 );
-				MOT_goSla(MOT_R90S,PARAM_getSra( SLA_90 ));
-				MOT_goBlock_Const( 1.0, 300 );
-			}
-			MOT_goBlock_FinSpeed( 0.5, 0 );
+			
+			MAP_setPos( 0, 0, NORTH );												// スタート位置
+			MAP_Goalsize(1);
+			MAP_makeContourMap_run( GOAL_MAP_X, GOAL_MAP_Y, BEST_WAY );					// 等高線マップを作る
+			MAP_makeCmdList( 0, 0, NORTH, GOAL_MAP_X, GOAL_MAP_Y, &en_endDir );		// ドライブコマンド作成
+			MAP_makeSuraCmdList();													// スラロームコマンド作成
+			MAP_makeSkewCmdList();													// 斜めコマンド作成
+			MAP_drive( MAP_DRIVE_SURA );
+			TIME_wait(500);
+			MOT_turn(MOT_R180);
+			MAP_actGoalLED();
 			break;
 			
 		case MODE_11:
@@ -698,11 +709,11 @@ PRIVATE void MODE_exe( void )
 			MAP_Goalsize(1);
 			MAP_setPos( 0, 0, NORTH );							// スタート位置
 
-			log_flag_on();
+//			log_flag_on();
 
 			MAP_searchGoalKnown(GOAL_MAP_X, GOAL_MAP_Y, SEARCH);
 
-			log_flag_off();
+//			log_flag_off();
 
 //			POS_stop();			// debug
 			if (( SW_ON == SW_INC_PIN )||(SYS_isOutOfCtrl() == TRUE))break;
@@ -715,14 +726,14 @@ PRIVATE void MODE_exe( void )
 			MAP_searchGoalKnown(0, 0, SEARCH);
 //			MAP_searchGoal( 0, 0, SEARCH, SEARCH_RETURN );
 
-			log_flag_off();
+//			log_flag_off();
 
 //			TIME_wait(1000);
 			if (( SW_ON == SW_INC_PIN )||(SYS_isOutOfCtrl() == TRUE))break;
 			map_write();
 //			PARAM_setCntType( TRUE );								// 最短走行
 			MAP_setPos( 0, 0, NORTH );								// スタート位置
-			MAP_makeContourMap( GOAL_MAP_X, GOAL_MAP_Y, BEST_WAY );					// 等高線マップを作る
+			MAP_makeContourMap_run( GOAL_MAP_X, GOAL_MAP_Y, BEST_WAY );					// 等高線マップを作る
 			MAP_makeCmdList( 0, 0, NORTH, GOAL_MAP_X, GOAL_MAP_Y, &en_endDir );		// ドライブコマンド作成
 			MAP_makeSuraCmdList();													// スラロームコマンド作成
 			MAP_makeSkewCmdList();
